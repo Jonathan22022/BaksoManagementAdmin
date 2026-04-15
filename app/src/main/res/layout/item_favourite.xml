@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_favourite_card"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/imgMenu"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/bakso"/>
+
+    <LinearLayout
+        android:layout_marginStart="12dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvMenuName"
+            android:text="Bakso Keju"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#8B2E2E"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnMenu"
+            android:text="Lihat Menu"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#FF2E2E"
+            android:layout_width="160dp"
+            android:layout_height="40dp"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgFav"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_star"/>
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/btnGopay"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/bg_card_white"
+        android:gravity="center"
+        android:layout_marginEnd="10dp">
+
+        <TextView android:text="Gopay"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btnShopeePay"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/bg_card_white"
+        android:gravity="center">
+
+        <TextView android:text="ShopeePay"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_page">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Setting"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:padding="14dp"
+            android:background="@drawable/bg_setting_title"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Account -->
+        <TextView
+            android:id="@+id/btnAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Account"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+        <!-- Notification -->
+        <TextView
+            android:id="@+id/btnNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notification"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+        <!-- Language -->
+        <TextView
+            android:id="@+id/btnLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Language"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+        <!-- Background -->
+        <TextView
+            android:id="@+id/btnBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Language"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+        <!-- Change Account -->
+        <TextView
+            android:id="@+id/btnChangeAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Account"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+        <!-- Delete Account -->
+        <TextView
+            android:id="@+id/btnDeleteAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Account"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_setting_item"/>
+
+    </LinearLayout>
+
+</ScrollView>

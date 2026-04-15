@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_page">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Nama Menu -->
+        <EditText
+            android:id="@+id/etNamaMenu"
+            android:hint="Nama Menu"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Harga -->
+        <EditText
+            android:id="@+id/etHarga"
+            android:hint="Harga"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Gambar Menu -->
+        <TextView
+            android:text="Gambar Menu"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <FrameLayout
+            android:id="@+id/btnPickImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_dashed_box">
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+            <LinearLayout
+                android:id="@+id/layoutPlaceholder"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_gallery"/>
+
+                <TextView
+                    android:text="Masukkan Gambar"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
+                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"/>
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- Toggle Addons -->
+        <TextView
+            android:text="Add-ons (optional)"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <RadioGroup
+            android:id="@+id/rgAddons"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rbTidak"
+                android:text="Tidak"
+                android:checked="true"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <RadioButton
+                android:id="@+id/rbYa"
+                android:text="Ya"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </RadioGroup>
+
+        <!-- Container Add-ons -->
+        <LinearLayout
+            android:id="@+id/layoutAddons"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Tombol tambah -->
+            <Button
+                android:id="@+id/btnTambahAddon"
+                android:text="+ Tambah Add On"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- List Addons -->
+            <LinearLayout
+                android:id="@+id/containerAddons"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <!-- Submit -->
+        <Button
+            android:id="@+id/btnSubmit"
+            android:text="Tambahkan Menu"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_send"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+</ScrollView>

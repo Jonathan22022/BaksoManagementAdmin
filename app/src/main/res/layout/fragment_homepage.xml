@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--fragment_homepage.xml-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#E6B8B7"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="Welcome back, User"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#8B2E2E"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="Previously Ordered"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#8B2E2E"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"/>
+
+</LinearLayout>

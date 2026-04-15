@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/headerProfileContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingTop="50dp"
+    android:paddingBottom="24dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@android:color/white">
+
+    <!-- Foto profil, ubah yang android:src agar menampilkan profile_picutre dari akun yang dilogin -->
+    <ImageView
+        android:id="@+id/imageViewProfile"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/ic_account_"
+        android:contentDescription="@string/nav_header_desc"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImage"/>
+
+    <!-- Nama pengguna, ubah yang android:text agar menampilkan nama dari akun yang dilogin-->
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="12dp" />
+
+    <View
+        android:layout_width="80dp"
+        android:layout_height="2dp"
+        android:background="@android:color/darker_gray" />
+</LinearLayout>

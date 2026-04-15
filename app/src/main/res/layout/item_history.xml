@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_history_card"
+    android:padding="10dp"
+    android:layout_marginBottom="10dp">
+
+    <ImageView
+        android:id="@+id/imgMenu"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/bakso"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvMenuName"
+            android:text="Bakso Keju"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:text="Senin, 24 Januari 2025"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tvDesc"
+            android:text="Campuran Mie dan Bihun"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:text="Rp. 28.000"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btnOrderAgain"
+            android:text="Pesan Lagi"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:backgroundTint="#FF2E2E"
+            android:textColor="#FFFFFF"/>
+
+    </LinearLayout>
+
+</LinearLayout>

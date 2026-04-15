@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "158359510852",
+    "firebase_url": "https://baksomanagement-738c2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "baksomanagement-738c2",
+    "storage_bucket": "baksomanagement-738c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158359510852:android:7f3e74522bfd3ee3b4c111",
+        "android_client_info": {
+          "package_name": "com.example.baksomanagementadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158359510852-4qa4f2cig83kb5jl4dojvuohc2ef0hf4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJv8aT_1rK2Hg3eAPOJDlzMhHgYa3TigA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158359510852-4qa4f2cig83kb5jl4dojvuohc2ef0hf4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/firstPageFragment">
+
+    <fragment
+        android:id="@+id/firstPageFragment"
+        android:name="com.example.baksomanagementadmin.ui.FirstPageFragment"
+        android:label="First Page">
+
+        <action
+            android:id="@+id/action_firstPageFragment_to_registerFragment"
+            app:destination="@id/registerFragment"/>
+
+        <action
+            android:id="@+id/action_firstPageFragment_to_loginFragment"
+            app:destination="@id/loginFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.baksomanagementadmin.ui.RegisterFragment"
+        android:label="Register">
+
+        <action
+            android:id="@+id/action_registerFragment_to_firstPageFragment"
+            app:destination="@id/firstPageFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.baksomanagementadmin.ui.LoginFragment"
+        android:label="Login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_homepageFragment"
+            app:destination="@id/homepageFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_lupaPasswordFragment"
+            app:destination="@id/lupaPasswordFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_firstPageFragment"
+            app:destination="@id/firstPageFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/lupaPasswordFragment"
+        android:name="com.example.baksomanagementadmin.ui.LupaPasswordFragment"
+        android:label="Lupa Password"/>
+
+    <fragment
+        android:id="@+id/homepageFragment"
+        android:name="com.example.baksomanagementadmin.ui.HomepageFragment"
+        android:label="Homepage"/>
+
+    <fragment
+        android:id="@+id/menu_dashboard"
+        android:name="com.example.baksomanagementadmin.ui.HomepageFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_homepage"/>
+
+    <fragment
+        android:id="@+id/menu_search"
+        android:name="com.example.baksomanagementadmin.ui.SearchFragment"
+        android:label="@string/menu_search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_detailMenuFragment"
+            app:destination="@id/menu_detail_makanan"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_setting"
+        android:name="com.example.baksomanagementadmin.ui.SettingFragment"
+        android:label="@string/menu_setting"
+        tools:layout="@layout/fragment_setting"/>
+
+    <fragment
+        android:id="@+id/menu_about_us"
+        android:name="com.example.baksomanagementadmin.ui.AboutUsFragment"
+        android:label="@string/menu_about_us"
+        tools:layout="@layout/fragment_about_us"/>
+
+    <fragment
+        android:id="@+id/menu_account"
+        android:name="com.example.baksomanagementadmin.ui.AccountFragment"
+        android:label="@string/menu_account"
+        tools:layout="@layout/fragment_account"/>
+
+    <fragment
+        android:id="@+id/menu_makanan"
+        android:name="com.example.baksomanagementadmin.ui.MenuFragment"
+        android:label="@string/menu_makanan"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_detailMenuFragment"
+            app:destination="@id/menu_detail_makanan"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_add_makanan"
+        android:name="com.example.baksomanagementadmin.ui.AddMenuFragment"
+        android:label="@string/menu_add_makanan"
+        tools:layout="@layout/fragment_add_menu"/>
+
+    <fragment
+        android:id="@+id/menu_detail_makanan"
+        android:name="com.example.baksomanagementadmin.ui.DetailMenuFragment"
+        android:label="@string/menu_detail_makanan"
+        tools:layout="@layout/fragment_detail_menu">
+        <action
+            android:id="@+id/action_menuDetailFragment_to_editMenuFragment"
+            app:destination="@id/menu_edit_makanan"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_edit_makanan"
+        android:name="com.example.baksomanagementadmin.ui.EditMenuFragment"
+        android:label="@string/menu_edit_makanan"
+        tools:layout="@layout/fragment_edit_menu"/>
+
+    <fragment
+        android:id="@+id/menu_history"
+        android:name="com.example.baksomanagementadmin.ui.HistoryFragment"
+        android:label="@string/menu_history"
+        tools:layout="@layout/fragment_history">
+        <action
+            android:id="@+id/action_historyFragment_to_menuFragment"
+            app:destination="@id/menu_makanan"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.example.baksomanagementadmin.ui.CheckoutFragment"
+        android:label="@string/checkout"
+        tools:layout="@layout/fragment_checkout">
+        <action
+            android:id="@+id/action_checkoutFragment_to_paymentMethodFragment"
+            app:destination="@id/paymentMethodFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.baksomanagementadmin.ui.CartFragment"
+        android:label="@string/cart"
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_menuFragment"
+            app:destination="@id/menu_makanan"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_favourite"
+        android:name="com.example.baksomanagementadmin.ui.FavouriteFragment"
+        android:label="@string/menu_favourite"
+        tools:layout="@layout/fragment_favourite"/>
+
+    <fragment
+        android:id="@+id/paymentMethodFragment"
+        android:name="com.example.baksomanagementadmin.ui.PaymentMethodFragment"
+        android:label="@string/payment_method"
+        tools:layout="@layout/fragment_payment_method">
+
+        <action
+            android:id="@+id/action_paymentMethodFragment_to_paymentConfirmationFragment"
+            app:destination="@id/paymentConfirmationFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentConfirmationFragment"
+        android:name="com.example.baksomanagementadmin.ui.PaymentConfirmationFragment"
+        android:label="@string/payment_confirmation"
+        tools:layout="@layout/fragment_payment_confirmation">
+
+        <action
+            android:id="@+id/action_paymentConfirmationFragment_to_enterPinFragment"
+            app:destination="@id/enterPinFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/enterPinFragment"
+        android:name="com.example.baksomanagementadmin.ui.EnterPinFragment"
+        android:label="@string/enter_pin"
+        tools:layout="@layout/fragment_enter_pin">
+
+        <action
+            android:id="@+id/action_enterPinFragment_to_paymentSuccessFragment"
+            app:destination="@id/paymentSuccessFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentSuccessFragment"
+        android:name="com.example.baksomanagementadmin.ui.PaymentSuccessFragment"
+        android:label="@string/payment_success"
+        tools:layout="@layout/fragment_payment_success"/>
+
+
+</navigation>

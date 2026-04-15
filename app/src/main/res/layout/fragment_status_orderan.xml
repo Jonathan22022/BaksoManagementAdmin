@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/bg_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:padding="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- STATUS -->
+        <TextView
+            android:text="Status Orderan"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="@drawable/bg_card_pink"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <TextView
+            android:text="Baru Diterima Vendor"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="@drawable/bg_card_pink"
+            android:padding="10dp"
+            android:layout_marginBottom="12dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+        <!-- CARD PESANAN -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_pink"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Pesanan"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <!-- ITEM 1 -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/bakso"
+                    android:background="@drawable/bg_card_white"
+                    android:padding="8dp"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Bakso Keju"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="Campuran Mie dan Bihun"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="No adds on"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="Jumlah: 2 porsi"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ITEM 2 -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/bakso"
+                    android:background="@drawable/bg_card_white"
+                    android:padding="8dp"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Bakso Malang"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="Campuran Mie dan Bihun"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="No adds on"
+                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+                    <TextView
+                        android:text="Jumlah: 1 porsi"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- LOKASI -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_pink"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/ic_location"
+                android:layout_width="20dp"
+                android:layout_height="20dp"/>
+
+            <TextView
+                android:text="UMN, Gedung B, Ruangan 504"
+                android:layout_marginStart="8dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </LinearLayout>
+
+        <!-- TOTAL -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_pink"
+            android:padding="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Total : Rp. 84.000,00"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <ImageView
+                android:src="@drawable/ic_arrow_up"
+                android:layout_width="20dp"
+                android:layout_height="20dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
