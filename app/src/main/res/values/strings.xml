@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">BaksoManagementAdmin</string>
+    <string name="app_name">BaksokuAdmin</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_title">Navigation</string>
+    <string name="name">Name</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_about_us">About Us</string>
+    <string name="menu_favourite">Favourite</string>
+    <string name="menu_makanan">Menu</string>
+    <string name="menu_add_makanan">Add Menu</string>
+    <string name="menu_edit_makanan">Edit Menu</string>
+    <string name="menu_detail_makanan">Detail Menu</string>
+    <string name="menu_history">History</string>
+    <string name="menu_setting">Setting</string>
+    <string name="menu_logout">Logout</string>
+    <string name="checkout">Checkout</string>
+    <string name="cart">Cart</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="payment_confirmation">Payment Confirmation</string>
+    <string name="enter_pin">Enter Pin</string>
+    <string name="payment_success">Payment Success</string>
 </resources>
