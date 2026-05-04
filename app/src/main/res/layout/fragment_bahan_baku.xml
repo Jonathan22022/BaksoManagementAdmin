@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--fragment_homepage.xml-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Menu"
+        android:text="Bahan Baku"
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="#7A2E2E"
@@ -22,18 +21,17 @@
 
     <!-- Button Tambah -->
     <Button
-        android:id="@+id/btnTambahMenu"
+        android:id="@+id/btnTambahBahan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tambah Menu"
+        android:text="Tambah Bahan Baku"
         android:textColor="@android:color/white"
         android:backgroundTint="#FF3B30"
         android:layout_marginBottom="12dp"/>
 
     <!-- List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMenu"
+        android:id="@+id/recyclerBahanBaku"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>

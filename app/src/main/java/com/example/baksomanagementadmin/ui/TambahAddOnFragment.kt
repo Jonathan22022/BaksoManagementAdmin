@@ -2,10 +2,7 @@ package com.example.baksomanagementadmin.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -13,108 +10,105 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.baksomanagementadmin.R
-import com.example.baksomanagementadmin.data.model.Menu
-import com.example.baksomanagementadmin.data.repository.MenuRepository
+import com.example.baksomanagementadmin.data.model.AddOn
+import com.example.baksomanagementadmin.data.repository.AddOnRepository
 import java.io.File
 
-class AddMenuFragment : Fragment() {
+class TambahAddOnFragment : Fragment() {
 
     private lateinit var btnPickImage: FrameLayout
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
-    private lateinit var menuRepository: MenuRepository
+    private lateinit var repository: AddOnRepository
 
     private var imageUri: Uri? = null
-
-    private val TAG = "AddMenuDebug"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_add_menu, container, false)
+        return inflater.inflate(R.layout.fragment_tambah_add_on, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        val etNama = view.findViewById<EditText>(R.id.etNamaAddOn)
+        val etHarga = view.findViewById<EditText>(R.id.etHargaAddOn)
+        val btnSubmit = view.findViewById<Button>(R.id.btnSubmit)
+
         btnPickImage = view.findViewById(R.id.btnPickImage)
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
-        menuRepository = MenuRepository()
+
+        repository = AddOnRepository()
 
         btnPickImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        val btnSubmit = view.findViewById<Button>(R.id.btnSubmit)
-
         btnSubmit.setOnClickListener {
 
-            val namaMenu = view.findViewById<EditText>(R.id.etNamaMenu).text.toString()
-            val harga = view.findViewById<EditText>(R.id.etHarga).text.toString().toIntOrNull() ?: 0
+            val nama = etNama.text.toString()
+            val harga = etHarga.text.toString().toIntOrNull() ?: 0
 
-            if (namaMenu.isEmpty()) {
-                Toast.makeText(requireContext(), "Nama menu wajib diisi", Toast.LENGTH_SHORT).show()
+            if (nama.isEmpty()) {
+                toast("Nama wajib diisi")
+                return@setOnClickListener
+            }
+
+            if (harga <= 0) {
+                toast("Harga harus diisi")
                 return@setOnClickListener
             }
 
             if (imageUri == null) {
-                Toast.makeText(requireContext(), "Pilih gambar dulu!", Toast.LENGTH_SHORT).show()
+                toast("Pilih gambar dulu")
                 return@setOnClickListener
             }
 
             uploadImageToCloudinary(imageUri!!,
-                onSuccess = { imageUrl ->
+                onSuccess = { url ->
 
-                    val menu = Menu(
-                        namaMenu = namaMenu,
-                        harga = harga,
-                        gambarUrl = imageUrl
+                    val data = AddOn(
+                        name = nama,
+                        price = harga,
+                        gambarUrl = url
                     )
 
-                    menuRepository.addMenu(menu,
-                        onSuccess = {
-                            Toast.makeText(requireContext(), "Menu berhasil ditambahkan", Toast.LENGTH_SHORT).show()
-                        },
-                        onError = {
-                            Toast.makeText(requireContext(), "Firestore gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-                        }
+                    repository.addAddOn(
+                        data,
+                        onSuccess = { toast("Berhasil tambah") },
+                        onError = { toast(it.message ?: "Error") }
                     )
                 },
-                onError = {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                }
+                onError = { toast(it) }
             )
-
-            Log.d(TAG, "Submit clicked")
-            Log.d(TAG, "Nama Menu: $namaMenu")
-            Log.d(TAG, "Harga: $harga")
-            Log.d(TAG, "ImageUri: $imageUri")
         }
     }
 
+    private fun toast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+
+    // picker
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             imageUri = uri
             if (uri != null) {
                 imgPreview.setImageURI(uri)
                 layoutPlaceholder.visibility = View.GONE
-                Log.d(TAG, "Image selected: $uri")
-            } else {
-                Log.d(TAG, "Image selection cancelled")
             }
         }
 
     private fun uriToFile(uri: Uri): File {
         val inputStream = requireContext().contentResolver.openInputStream(uri)
-        val file = File(requireContext().cacheDir, "upload_image.jpg")
+        val file = File(requireContext().cacheDir, "upload.jpg")
 
-        inputStream.use { input ->
+        inputStream?.use { input ->
             file.outputStream().use { output ->
-                input?.copyTo(output)
+                input.copyTo(output)
             }
         }
-
         return file
     }
 
@@ -127,23 +121,16 @@ class AddMenuFragment : Fragment() {
 
         MediaManager.get().upload(file.path)
             .callback(object : UploadCallback {
+                override fun onStart(requestId: String?) {}
 
-                override fun onStart(requestId: String?) {
-                    Log.d(TAG, "Upload started")
-                }
-
-                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                    Log.d(TAG, "Uploading: $bytes / $totalBytes")
-                }
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
 
                 override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                     val url = resultData?.get("secure_url").toString()
-                    Log.d(TAG, "Upload SUCCESS: $url")
                     onSuccess(url)
                 }
 
                 override fun onError(requestId: String?, error: ErrorInfo?) {
-                    Log.e(TAG, "Upload ERROR: ${error?.description}")
                     onError(error?.description ?: "Upload gagal")
                 }
 

@@ -10,7 +10,6 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.baksomanagementadmin.R
-import com.example.baksomanagementadmin.data.model.AddOn
 import com.example.baksomanagementadmin.data.model.Menu
 import com.example.baksomanagementadmin.data.repository.MenuRepository
 import android.util.Log
@@ -29,15 +28,10 @@ class EditMenuFragment : Fragment() {
     private lateinit var etHarga: EditText
     private lateinit var btnSubmit: Button
     private lateinit var btnPickImage: FrameLayout
-    private lateinit var layoutAddons: LinearLayout
-    private lateinit var containerAddons: LinearLayout
-    private lateinit var btnTambahAddon: Button
-    private lateinit var rgAddons: RadioGroup
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
-    private val TAG = "EditMenuDebug"
 
-    private val addonViews = mutableListOf<View>()
+    private val TAG = "EditMenuDebug"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,29 +49,15 @@ class EditMenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         menuRepository = MenuRepository()
+
         etNamaMenu = view.findViewById(R.id.etNamaMenu)
         etHarga = view.findViewById(R.id.etHarga)
         btnSubmit = view.findViewById(R.id.btnSubmit)
         btnPickImage = view.findViewById(R.id.btnPickImage)
         imgPreview = view.findViewById(R.id.imgPreview)
-        layoutAddons = view.findViewById(R.id.layoutAddons)
-        containerAddons = view.findViewById(R.id.containerAddons)
-        btnTambahAddon = view.findViewById(R.id.btnTambahAddon)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
-        rgAddons = view.findViewById(R.id.rgAddons)
+
         loadMenuData()
-        rgAddons.setOnCheckedChangeListener { _, checkedId ->
-            if (checkedId == R.id.rbYa) {
-                layoutAddons.visibility = View.VISIBLE
-            } else {
-                layoutAddons.visibility = View.GONE
-                containerAddons.removeAllViews()
-                addonViews.clear()
-            }
-        }
-        btnTambahAddon.setOnClickListener {
-            addAddonView()
-        }
 
         btnPickImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
@@ -102,53 +82,22 @@ class EditMenuFragment : Fragment() {
 
     private fun loadMenuData() {
         menuRepository.getMenuById(menuId) { menu ->
-
             menu?.let {
                 Log.d(TAG, "Menu loaded: ${it.namaMenu}, Harga: ${it.harga}")
-                Log.d(TAG, "Image URL: ${it.gambarUrl}")
-                Log.d(TAG, "Total addons: ${it.addons.size}")
+
                 etNamaMenu.setText(it.namaMenu)
                 etHarga.setText(it.harga.toString())
 
                 oldImageUrl = it.gambarUrl
+
                 if (oldImageUrl.isNotEmpty()) {
                     Glide.with(requireContext())
                         .load(oldImageUrl)
                         .into(imgPreview)
                     layoutPlaceholder.visibility = View.GONE
                 }
-
-                if (it.addons.isNotEmpty()) {
-                    layoutAddons.visibility = View.VISIBLE
-                    rgAddons.check(R.id.rbYa)
-
-                    for (addon in it.addons) {
-                        Log.d(TAG, "Addon: ${addon.name} - ${addon.price}")
-                        addAddonView(addon.name, addon.price)
-                    }
-                }
             }
         }
-    }
-    private fun addAddonView(name: String = "", price: Int = 0) {
-        Log.d(TAG, "Addon view added: $name - $price")
-        Log.d(TAG, "Total addon views: ${addonViews.size}")
-        val view = layoutInflater.inflate(R.layout.item_addon, containerAddons, false)
-
-        val etName = view.findViewById<EditText>(R.id.etAddonName)
-        val etPrice = view.findViewById<EditText>(R.id.etAddonPrice)
-        val btnRemove = view.findViewById<Button>(R.id.btnRemove)
-
-        etName.setText(name)
-        etPrice.setText(if (price == 0) "" else price.toString())
-
-        btnRemove.setOnClickListener {
-            containerAddons.removeView(view)
-            addonViews.remove(view)
-        }
-
-        addonViews.add(view)
-        containerAddons.addView(view)
     }
 
     private fun updateMenu() {
@@ -157,61 +106,35 @@ class EditMenuFragment : Fragment() {
         val namaMenu = etNamaMenu.text.toString()
         val harga = etHarga.text.toString().toIntOrNull() ?: 0
 
-        Log.d(TAG, "Nama: $namaMenu")
-        Log.d(TAG, "Harga: $harga")
-        Log.d(TAG, "ImageUri baru: $imageUri")
-        Log.d(TAG, "Old Image URL: $oldImageUrl")
-
         if (namaMenu.isEmpty()) {
             Toast.makeText(requireContext(), "Nama menu wajib diisi", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val addonsList = mutableListOf<AddOn>()
-        for (addonView in addonViews) {
-            val name = addonView.findViewById<EditText>(R.id.etAddonName).text.toString()
-            val price = addonView.findViewById<EditText>(R.id.etAddonPrice).text.toString().toIntOrNull() ?: 0
-
-            if (name.isNotEmpty()) {
-                addonsList.add(AddOn(name, price))
-            }
-        }
-
-        Log.d(TAG, "Total addons input: ${addonsList.size}")
-
-        for (addon in addonsList) {
-            Log.d(TAG, "Addon -> ${addon.name} : ${addon.price}")
-        }
-
         if (imageUri != null) {
             uploadImageToCloudinary(imageUri!!,
                 onSuccess = { newUrl ->
-                    updateToFirestore(namaMenu, harga, newUrl, addonsList)
+                    updateToFirestore(namaMenu, harga, newUrl)
                 },
                 onError = {
                     Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 }
             )
         } else {
-            updateToFirestore(namaMenu, harga, oldImageUrl, addonsList)
+            updateToFirestore(namaMenu, harga, oldImageUrl)
         }
     }
 
     private fun updateToFirestore(
         namaMenu: String,
         harga: Int,
-        imageUrl: String,
-        addons: List<AddOn>
+        imageUrl: String
     ) {
         val updatedMenu = Menu(
             id = menuId,
             namaMenu = namaMenu,
             harga = harga,
-            gambarUrl = imageUrl,
-            bihun = false,
-            mie = false,
-            keduanya = false,
-            addons = addons
+            gambarUrl = imageUrl
         )
 
         menuRepository.updateMenu(updatedMenu,
@@ -243,6 +166,7 @@ class EditMenuFragment : Fragment() {
         onError: (String) -> Unit
     ) {
         val file = uriToFile(uri)
+
         MediaManager.get().upload(file.path)
             .callback(object : UploadCallback {
                 override fun onStart(requestId: String?) {

@@ -51,44 +51,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Campurannya (+ Free)"
+                android:text="Campurannya"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"/>
 
-            <!-- OPTION -->
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <Button
-                    android:id="@+id/btnBihun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bihun"/>
-
-                <Button
-                    android:id="@+id/btnMie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mie"
-                    android:layout_marginStart="8dp"/>
-
-                <Button
-                    android:id="@+id/btnBoth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Keduanya"
-                    android:layout_marginStart="8dp"/>
-            </LinearLayout>
-
-            <!-- ADDONS -->
-            <LinearLayout
-                android:id="@+id/layoutAddonsContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginTop="10dp"/>
 
             <!-- QUANTITY -->
@@ -158,16 +128,6 @@
             android:textSize="18sp"
             android:layout_marginTop="20dp"
             android:backgroundTint="#FF1F1F"/>
-
-        <Button
-            android:id="@+id/btnEditMenu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Edit Menu"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="#FFA500"/>
 
     </LinearLayout>
 

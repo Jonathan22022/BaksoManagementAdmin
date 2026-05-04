@@ -1,17 +1,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_home"
-        android:title="Home"
-        android:icon="@drawable/ic_home"/>
-    <item
-        android:id="@+id/menu_makanan"
+        android:id="@+id/homepageFragment"
         android:title="Menu"
         android:icon="@drawable/ic_menu"/>
     <item
-        android:id="@+id/menu_cart"
-        android:title="Cart"
-        android:icon="@drawable/ic_cart"/>
+        android:id="@+id/menu_bahanBaku"
+        android:title="Bahan Baku"
+        android:icon="@drawable/ic_vegetable"/>
+    <item
+        android:id="@+id/menu_add_on"
+        android:title="Add On"
+        android:icon="@drawable/ic_addon"/>
+    <item
+        android:id="@+id/menu_weekly_insight"
+        android:title="Weekly Insight"
+        android:icon="@drawable/ic_weekly_insight"/>
     <item
         android:id="@+id/menu_account"
         android:title="Account"

@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_page"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/bg_page">
 
     <!-- Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Menu"
+        android:text="Add On"
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="#7A2E2E"
         android:gravity="center"
         android:padding="12dp"
         android:background="@drawable/bg_menu_title"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="10dp"/>
 
+    <!-- Button Tambah -->
+    <Button
+        android:id="@+id/btnTambahAddOn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Add On"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#FF3B30"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMenu"
+        android:id="@+id/recyclerAddOn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>

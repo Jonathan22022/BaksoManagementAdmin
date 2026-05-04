@@ -35,14 +35,11 @@ class HistoryAdapter(private val list: List<History>) :
     override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val item = list[position]
-
         holder.name.text = item.name
         holder.date.text = item.date
         holder.desc.text = item.desc
         holder.price.text = item.price
         holder.img.setImageResource(item.image)
-
     }
 }

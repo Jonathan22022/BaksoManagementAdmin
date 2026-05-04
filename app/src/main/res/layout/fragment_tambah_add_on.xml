@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg_page"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_page">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
@@ -11,19 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Nama Menu -->
+        <!-- Nama Add On -->
         <EditText
-            android:id="@+id/etNamaMenu"
-            android:hint="Nama Menu"
+            android:id="@+id/etNamaAddOn"
+            android:hint="Nama Add On"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"/>
 
-        <!-- Harga -->
         <EditText
-            android:id="@+id/etHarga"
-            android:hint="Harga"
+            android:id="@+id/etHargaAddOn"
+            android:hint="Harga Add On"
             android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -31,20 +30,9 @@
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"/>
 
-        <!-- Description -->
-        <EditText
-            android:id="@+id/etDescription"
-            android:hint="Description"
-            android:inputType="text"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"/>
-
-        <!-- Gambar Menu -->
+        <!-- Gambar Add On -->
         <TextView
-            android:text="Gambar Menu"
+            android:text="Gambar Add On"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
@@ -87,13 +75,13 @@
 
         <Button
             android:id="@+id/btnSubmit"
-            android:text="Tambahkan Menu"
+            android:text="Tambahkan Add On"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_send"
             android:textColor="@android:color/white"
             android:textStyle="bold"/>
-
     </LinearLayout>
-</ScrollView>
+
+</FrameLayout>

@@ -1,14 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddBahanBakuFragment">
+    android:background="@drawable/bg_page">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <!-- Nama Bahan Baku -->
+        <EditText
+            android:id="@+id/etNamaMenu"
+            android:hint="Nama Menu"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Harga -->
+        <EditText
+            android:id="@+id/etHarga"
+            android:hint="Harga (Rp)"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Berat -->
+        <EditText
+            android:id="@+id/etBerat"
+            android:hint="Berat (kg / liter)"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"/>
+
+        <!-- Gambar Bahan Baku -->
+        <TextView
+            android:text="Gambar Bahan Baku"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <FrameLayout
+            android:id="@+id/btnPickImage"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_dashed_box">
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+            <LinearLayout
+                android:id="@+id/layoutPlaceholder"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_gallery"/>
+
+                <TextView
+                    android:text="Masukkan Gambar"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
+                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"/>
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:text="Tambahkan Bahan Baku"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_send"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

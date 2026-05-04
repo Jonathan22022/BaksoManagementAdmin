@@ -10,13 +10,14 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
+import com.example.baksomanagementadmin.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 
 class AccountFragment : Fragment() {
 
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseClient.firestore
-
+    private val userRepository = UserRepository()
     private val TAG = "AccountFragment"
 
     private lateinit var imgProfile: ImageView
@@ -53,96 +54,42 @@ class AccountFragment : Fragment() {
     }
 
     private fun loadUserData() {
-
-        val userId = auth.currentUser?.uid
-
-        Log.d(TAG, "User ID: $userId")
-
-        if (userId == null) {
-            Log.e(TAG, "User belum login")
-            Toast.makeText(requireContext(), "User belum login", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        firestore.collection("users")
-            .document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-
-                Log.d(TAG, "Firestore berhasil diambil")
-
-                if (document.exists()) {
-
-                    Log.d(TAG, "Document user ditemukan")
-
-                    val nama = document.getString("nama")
-                    val email = document.getString("email")
-                    val phone = document.getString("noTelp")
-                    val imageUrl = document.getString("profilePicture")
-                    val createdAt = document.getLong("createdAt") ?: 0L
-
-                    Log.d(TAG, "Nama: $nama")
-                    Log.d(TAG, "Email: $email")
-                    Log.d(TAG, "Phone: $phone")
-                    Log.d(TAG, "Image URL: $imageUrl")
-                    Log.d(TAG, "Created At: $createdAt")
-
-                    tvNama.text = nama
-                    tvEmail.text = email
-                    tvPhone.text = phone
-
-                    // load foto profil
-                    if (!imageUrl.isNullOrEmpty()) {
-
-                        Log.d(TAG, "Load gambar dengan Glide")
-
-                        Glide.with(this)
-                            .load(imageUrl)
-                            .placeholder(R.drawable.ic_account_)
-                            .into(imgProfile)
-
-                    } else {
-
-                        Log.d(TAG, "Image URL kosong, gunakan placeholder")
-
-                    }
-
-                    // hitung usia akun
-                    val now = System.currentTimeMillis()
-                    val diff = now - createdAt
-
-                    val days = diff / (1000 * 60 * 60 * 24)
-                    val months = days / 30
-                    val years = days / 365
-
-                    Log.d(TAG, "Days: $days, Months: $months, Years: $years")
-
-                    val ageText = when {
-                        years > 0 -> "$years tahun"
-                        months > 0 -> "$months bulan"
-                        else -> "$days hari"
-                    }
-
-                    tvAccountAge.text = ageText
-
-                    Log.d(TAG, "Account age: $ageText")
-
+        userRepository.getCurrentUserDetail { user, error ->
+            if (user != null) {
+                tvNama.text = user.nama
+                tvEmail.text = user.email
+                tvPhone.text = user.noTelp
+                if (user.profilePicture.isNotEmpty()) {
+                    Glide.with(this)
+                        .load(user.profilePicture)
+                        .placeholder(R.drawable.ic_account_)
+                        .into(imgProfile)
                 } else {
-
-                    Log.e(TAG, "Document user tidak ditemukan")
-
+                    imgProfile.setImageResource(R.drawable.ic_account_)
                 }
-            }
-            .addOnFailureListener { e ->
 
-                Log.e(TAG, "Gagal mengambil data user", e)
+                val now = System.currentTimeMillis()
+                val diff = now - user.createdAt
+
+                val days = diff / (1000 * 60 * 60 * 24)
+                val months = days / 30
+                val years = days / 365
+
+                val ageText = when {
+                    years > 0 -> "$years tahun"
+                    months > 0 -> "$months bulan"
+                    else -> "$days hari"
+                }
+                tvAccountAge.text = ageText
+            } else {
+                Log.e(TAG, "Error: $error")
 
                 Toast.makeText(
                     requireContext(),
-                    "Gagal mengambil data user",
+                    error ?: "Gagal ambil data user",
                     Toast.LENGTH_SHORT
                 ).show()
-
             }
+        }
     }
 }

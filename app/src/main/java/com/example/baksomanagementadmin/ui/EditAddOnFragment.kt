@@ -2,57 +2,55 @@ package com.example.baksomanagementadmin.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.baksomanagementadmin.R
-import com.example.baksomanagementadmin.data.model.BahanBaku
-import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
+import com.example.baksomanagementadmin.data.model.AddOn
+import com.example.baksomanagementadmin.data.repository.AddOnRepository
 import java.io.File
 
-class EditBahanBakuFragment : Fragment() {
+class EditAddOnFragment : Fragment() {
 
-    private lateinit var repository: BahanBakuRepository
+    private lateinit var repository: AddOnRepository
 
     private lateinit var etNama: EditText
     private lateinit var etHarga: EditText
-    private lateinit var etBerat: EditText
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
     private lateinit var btnPickImage: FrameLayout
     private lateinit var btnSubmit: Button
 
-    private val TAG = "EditBahanBakuDebug"
-
     private var imageUri: Uri? = null
     private var currentImageUrl: String = ""
-    private var bahanId: String = ""
+    private var addOnId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_edit_bahan_baku, container, false)
+    ): View {
+        return inflater.inflate(R.layout.fragment_edit_add_on, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        repository = BahanBakuRepository()
-        bahanId = arguments?.getString("BAHAN_ID") ?: ""
-        etNama = view.findViewById(R.id.etNamaMenu)
-        etHarga = view.findViewById(R.id.etHarga)
-        etBerat = view.findViewById(R.id.etBerat)
+        repository = AddOnRepository()
+        addOnId = arguments?.getString("ADDON_ID") ?: ""
+
+        // bind view
+        etNama = view.findViewById(R.id.etNamaAddOn)
+        etHarga = view.findViewById(R.id.etHargaAddOn)
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
         btnPickImage = view.findViewById(R.id.btnPickImage)
         btnSubmit = view.findViewById(R.id.btnSubmit)
 
-        btnSubmit.text = "Update Bahan Baku"
+        btnSubmit.text = "Update Add On"
 
         loadData()
 
@@ -65,14 +63,14 @@ class EditBahanBakuFragment : Fragment() {
         }
     }
 
+    // 🔥 Load data lama
     private fun loadData() {
-        repository.getBahanBakuList { list ->
-            val data = list.find { it.id == bahanId }
+        repository.getAddOnList { list ->
+            val data = list.find { it.id == addOnId }
 
             if (data != null) {
-                etNama.setText(data.nama)
-                etHarga.setText(data.harga.toString())
-                etBerat.setText(data.berat.toString())
+                etNama.setText(data.name)
+                etHarga.setText(data.price.toString())
 
                 currentImageUrl = data.gambarUrl
 
@@ -85,47 +83,44 @@ class EditBahanBakuFragment : Fragment() {
         }
     }
 
-    // 🔥 Update data
+    // 🔥 Update logic
     private fun updateData() {
 
         val nama = etNama.text.toString()
         val harga = etHarga.text.toString().toIntOrNull() ?: 0
-        val berat = etBerat.text.toString().toDoubleOrNull() ?: 0.0
 
         if (nama.isEmpty()) {
             toast("Nama wajib diisi")
             return
         }
 
+        if (harga <= 0) {
+            toast("Harga wajib diisi")
+            return
+        }
+
         if (imageUri != null) {
-            // upload gambar baru
             uploadImageToCloudinary(imageUri!!,
                 onSuccess = { url ->
-                    saveToFirestore(nama, harga, berat, url)
+                    saveToFirestore(nama, harga, url)
                 },
                 onError = { toast(it) }
             )
         } else {
-            // pakai gambar lama
-            saveToFirestore(nama, harga, berat, currentImageUrl)
+            saveToFirestore(nama, harga, currentImageUrl)
         }
     }
 
-    private fun saveToFirestore(
-        nama: String,
-        harga: Int,
-        berat: Double,
-        imageUrl: String
-    ) {
-        val updated = BahanBaku(
-            id = bahanId,
-            nama = nama,
-            harga = harga,
-            berat = berat,
+    private fun saveToFirestore(nama: String, harga: Int, imageUrl: String) {
+
+        val updated = AddOn(
+            id = addOnId,
+            name = nama,
+            price = harga,
             gambarUrl = imageUrl
         )
 
-        repository.updateBahanBaku(
+        repository.updateAddOn(
             updated,
             onSuccess = { toast("Berhasil update") },
             onError = { toast(it.message ?: "Error") }
@@ -136,8 +131,9 @@ class EditBahanBakuFragment : Fragment() {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 
+    // picker
     private val pickImageLauncher =
-        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             imageUri = uri
             if (uri != null) {
                 imgPreview.setImageURI(uri)
@@ -147,16 +143,16 @@ class EditBahanBakuFragment : Fragment() {
 
     private fun uriToFile(uri: Uri): File {
         val inputStream = requireContext().contentResolver.openInputStream(uri)
-        val file = File(requireContext().cacheDir, "upload_image.jpg")
+        val file = File(requireContext().cacheDir, "upload.jpg")
 
-        inputStream.use { input ->
+        inputStream?.use { input ->
             file.outputStream().use { output ->
-                input?.copyTo(output)
+                input.copyTo(output)
             }
         }
-
         return file
     }
+
     private fun uploadImageToCloudinary(
         uri: Uri,
         onSuccess: (String) -> Unit,
@@ -167,22 +163,16 @@ class EditBahanBakuFragment : Fragment() {
         MediaManager.get().upload(file.path)
             .callback(object : UploadCallback {
 
-                override fun onStart(requestId: String?) {
-                    Log.d(TAG, "Upload started")
-                }
+                override fun onStart(requestId: String?) {}
 
-                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                    Log.d(TAG, "Uploading: $bytes / $totalBytes")
-                }
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
 
                 override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                     val url = resultData?.get("secure_url").toString()
-                    Log.d(TAG, "Upload SUCCESS: $url")
                     onSuccess(url)
                 }
 
                 override fun onError(requestId: String?, error: ErrorInfo?) {
-                    Log.e(TAG, "Upload ERROR: ${error?.description}")
                     onError(error?.description ?: "Upload gagal")
                 }
 

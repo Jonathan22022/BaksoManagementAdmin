@@ -23,11 +23,14 @@
             app:navigationIcon="@drawable/ic_drawer" />
 
         <!-- FRAGMENT CONTAINER -->
-        <FrameLayout
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/home_fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
 
         <!-- BOTTOM NAVIGATION -->
         <com.google.android.material.bottomnavigation.BottomNavigationView

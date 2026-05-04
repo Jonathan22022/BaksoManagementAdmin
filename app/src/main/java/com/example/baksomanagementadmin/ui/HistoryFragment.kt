@@ -47,11 +47,6 @@ class HistoryFragment : Fragment() {
             recycler.adapter = adapter
         }
 
-        // BUTTON TAMBAH PESANAN
-        btnAddOrder.setOnClickListener {
-            findNavController().navigate(R.id.action_historyFragment_to_menuFragment)
-        }
-
         // FAB DELETE
         fabDelete.setOnClickListener {
 

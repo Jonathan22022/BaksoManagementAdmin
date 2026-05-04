@@ -52,11 +52,9 @@ class DetailMenuFragment : Fragment() {
 
         tvQty = view.findViewById(R.id.tvQty)
         tvTotal = view.findViewById(R.id.tvTotal)
-        layoutAddons = view.findViewById(R.id.layoutAddonsContainer)
 
         val btnPlus = view.findViewById<Button>(R.id.btnPlus)
         val btnMinus = view.findViewById<Button>(R.id.btnMinus)
-        btnEditMenu = view.findViewById(R.id.btnEditMenu)
         menuRepository.getMenuById(menuId) { menu ->
 
             menu?.let {
@@ -71,7 +69,6 @@ class DetailMenuFragment : Fragment() {
                     .load(it.gambarUrl)
                     .into(imgMenu)
 
-                loadAddons(it)
             }
         }
 
@@ -91,44 +88,8 @@ class DetailMenuFragment : Fragment() {
             }
         }
 
-        btnEditMenu.setOnClickListener {
-
-            val fragment = EditMenuFragment().apply {
-                arguments = Bundle().apply {
-                    putString("MENU_ID", menuId)
-                }
-            }
-
-            findNavController().navigate(R.id.action_menuDetailFragment_to_editMenuFragment)
-        }
     }
 
-    private fun loadAddons(menu: Menu) {
-
-        layoutAddons.removeAllViews()
-
-        val btnNoAdd = Button(requireContext())
-        btnNoAdd.text = "No addons"
-        btnNoAdd.setOnClickListener {
-            selectedAddonPrice = 0
-            updateTotal()
-        }
-
-        layoutAddons.addView(btnNoAdd)
-
-        for (addon in menu.addons) {
-
-            val btn = Button(requireContext())
-            btn.text = "${addon.name} (+ Rp ${addon.price})"
-
-            btn.setOnClickListener {
-                selectedAddonPrice = addon.price
-                updateTotal()
-            }
-
-            layoutAddons.addView(btn)
-        }
-    }
 
     private fun updateTotal() {
         val total = (basePrice + selectedAddonPrice) * quantity
