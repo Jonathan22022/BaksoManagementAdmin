@@ -4,6 +4,7 @@ data class OrderItem(
     val id: String = "",
     val menu_id: String = "",
     val nama: String = "",
+    val imageUrl: String = "",
     val harga: Int = 0,
     val quantity: Int = 0,
     val catatan: String = "",

@@ -1,11 +1,10 @@
 package com.example.baksomanagementadmin.data.model
 
-//Modal
-//Pendapatan
-//Pengeluaran
-//Total pendapatan per minggu
-//Total Pengeluaran per minggu
-//Menu makanan dan minuman yang sering dipesan
-
-class WeeklyInsight {
-}
+data class WeeklyInsight(
+    val dailyIncome: MutableMap<String, Float> = mutableMapOf(),
+    val dailyExpense: MutableMap<String, Float> = mutableMapOf(),
+    val totalIncome: Int = 0,
+    val totalExpense: Int = 0,
+    val bestMenu: String = "-",
+    val totalBestMenuOrdered: Int = 0
+)

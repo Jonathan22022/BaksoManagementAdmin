@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.Menu
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 import com.example.baksomanagementadmin.data.repository.MenuRepository
 import java.io.File
 
@@ -23,6 +26,9 @@ class AddMenuFragment : Fragment() {
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
     private lateinit var menuRepository: MenuRepository
+    private lateinit var rvBahan: RecyclerView
+    private lateinit var bahanAdapter: BahanMenuAdapter
+    private lateinit var bahanRepository: BahanBakuRepository
 
     private var imageUri: Uri? = null
 
@@ -41,7 +47,11 @@ class AddMenuFragment : Fragment() {
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
         menuRepository = MenuRepository()
-
+        rvBahan = view.findViewById(R.id.rvBahan)
+        bahanRepository = BahanBakuRepository()
+        rvBahan.layoutManager =
+            LinearLayoutManager(requireContext())
+        loadBahanBaku()
         btnPickImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -51,6 +61,9 @@ class AddMenuFragment : Fragment() {
         btnSubmit.setOnClickListener {
 
             val namaMenu = view.findViewById<EditText>(R.id.etNamaMenu).text.toString()
+            val description = view.findViewById<EditText>(R.id.etDescription).text.toString()
+            val bahanList =
+                bahanAdapter.getSelectedBahan()
             val harga = view.findViewById<EditText>(R.id.etHarga).text.toString().toIntOrNull() ?: 0
 
             if (namaMenu.isEmpty()) {
@@ -69,7 +82,9 @@ class AddMenuFragment : Fragment() {
                     val menu = Menu(
                         namaMenu = namaMenu,
                         harga = harga,
-                        gambarUrl = imageUrl
+                        gambarUrl = imageUrl,
+                        description = description,
+                        bahanList = bahanList
                     )
 
                     menuRepository.addMenu(menu,
@@ -93,6 +108,15 @@ class AddMenuFragment : Fragment() {
         }
     }
 
+    private fun loadBahanBaku() {
+
+        bahanRepository.getBahanBakuList { list ->
+
+            bahanAdapter = BahanMenuAdapter(list)
+
+            rvBahan.adapter = bahanAdapter
+        }
+    }
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             imageUri = uri

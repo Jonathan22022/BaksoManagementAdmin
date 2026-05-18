@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

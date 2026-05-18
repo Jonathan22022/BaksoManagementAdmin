@@ -5,5 +5,6 @@ data class BahanBaku(
     val nama: String = "",
     val harga: Int = 0,
     val berat: Double = 0.0,
-    val gambarUrl: String = ""
+    val gambarUrl: String = "",
+    val createdAt: Long = System.currentTimeMillis()
 )

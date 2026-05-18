@@ -63,4 +63,24 @@ class BahanBakuRepository {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onError(it) }
     }
+
+    fun getAllBahan(
+        onResult: (List<BahanBaku>) -> Unit
+    ) {
+
+        firestore.collection("bahan_baku")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = result.documents.mapNotNull {
+
+                    val bahan =
+                        it.toObject(BahanBaku::class.java)
+
+                    bahan?.copy(id = it.id)
+                }
+
+                onResult(list)
+            }
+    }
 }

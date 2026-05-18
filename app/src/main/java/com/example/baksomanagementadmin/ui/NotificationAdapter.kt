@@ -9,6 +9,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.util.Log
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class NotificationAdapter(
     private val list: List<AdminOrderItem>,
@@ -17,6 +22,7 @@ class NotificationAdapter(
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvId: TextView = view.findViewById(R.id.tvId)
+        val imgMenu: ImageView = view.findViewById(R.id.imgMenu)
         val tvNama: TextView = view.findViewById(R.id.tvNama)
         val tvDate: TextView = view.findViewById(R.id.tvDate)
         val tvAddon: TextView = view.findViewById(R.id.tvAddon)
@@ -42,11 +48,19 @@ class NotificationAdapter(
         holder.tvNama.text = item.nama
 
         // format tanggal
-        val sdf = java.text.SimpleDateFormat("dd MMM yyyy, HH:mm", java.util.Locale.getDefault())
-        holder.tvDate.text = sdf.format(java.util.Date(item.createdAt))
+        val sdf = SimpleDateFormat(
+            "EEEE, dd MMMM yyyy, HH:mm",
+            Locale("id", "ID")
+        )
+
+        holder.tvDate.text = sdf.format(Date(item.createdAt))
 
         holder.tvQty.text = "Jumlah: ${item.quantity}"
         holder.tvTotal.text = "Rp ${item.total}"
+
+        Glide.with(holder.imgMenu.context)
+            .load(item.imageUrl)
+            .into(holder.imgMenu)
 
         holder.tvAddon.text =
             if (item.addons.isEmpty()) "No add-on"

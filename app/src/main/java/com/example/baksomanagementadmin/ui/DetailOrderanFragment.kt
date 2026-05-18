@@ -8,110 +8,163 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
+import com.example.baksomanagementadmin.data.model.OrderItem
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 
 class DetailOrderanFragment : Fragment() {
 
     private val firestore = FirebaseClient.firestore
+
     private var orderId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         orderId = arguments?.getString("ORDER_ID") ?: ""
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_detail_orderan, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
         val tvUser = view.findViewById<TextView>(R.id.tvUser)
-        val tvMenu = view.findViewById<TextView>(R.id.tvMenu)
-        val tvDesc = view.findViewById<TextView>(R.id.tvDesc)
-        val tvAddon = view.findViewById<TextView>(R.id.tvAddon)
-        val tvQty = view.findViewById<TextView>(R.id.tvQty)
-        val tvLocation = view.findViewById<TextView>(R.id.tvLocation)
+
+        val rvItems = view.findViewById<RecyclerView>(R.id.rvItems)
+
         val btnSelesai = view.findViewById<Button>(R.id.btnSelesai)
+        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
+
         val spStatus = view.findViewById<Spinner>(R.id.spStatus)
 
-        val statusList = listOf("pending", "diproses", "selesai")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, statusList)
-        spStatus.adapter = adapter
+        rvItems.layoutManager = LinearLayoutManager(requireContext())
 
-        loadDetail(
-            tvTitle, tvUser, tvMenu, tvDesc,
-            tvAddon, tvQty, tvLocation, spStatus
+        val statusList = listOf(
+            "pending",
+            "diproses",
+            "selesai",
+            "dibatalkan"
         )
 
-        btnSelesai.setOnClickListener {
-            updateStatus("selesai")
-        }
-    }
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            statusList
+        )
 
-    private fun loadDetail(
-        tvTitle: TextView,
-        tvUser: TextView,
-        tvMenu: TextView,
-        tvDesc: TextView,
-        tvAddon: TextView,
-        tvQty: TextView,
-        tvLocation: TextView,
-        spStatus: Spinner
-    ) {
+        adapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
 
-        firestore.collection("orders").document(orderId)
+        spStatus.adapter = adapter
+
+        firestore.collection("orders")
+            .document(orderId)
             .get()
             .addOnSuccessListener { orderDoc ->
 
-                val user = orderDoc.getString("userID") ?: ""
-                val status = orderDoc.getString("status") ?: "pending"
+                val userId =
+                    orderDoc.getString("userID") ?: ""
+
+                val status =
+                    orderDoc.getString("status") ?: "pending"
 
                 tvTitle.text = "Orderan #$orderId"
-                tvUser.text = "Dipesan oleh: $user"
-                tvLocation.text = "UMN (dummy lokasi)" // bisa kamu ambil dari DB nanti
 
-                // set spinner
-                val pos = (spStatus.adapter as ArrayAdapter<String>).getPosition(status)
-                spStatus.setSelection(pos)
+                tvUser.text = "User ID: $userId"
 
-                // ambil item
+                val pos = statusList.indexOf(status)
+
+                if (pos >= 0) {
+                    spStatus.setSelection(pos)
+                }
+
                 firestore.collection("orders")
                     .document(orderId)
                     .collection("items")
                     .get()
-                    .addOnSuccessListener { items ->
+                    .addOnSuccessListener { result ->
 
-                        val item = items.documents.firstOrNull() ?: return@addOnSuccessListener
+                        val items = mutableListOf<OrderItem>()
 
-                        val nama = item.getString("nama") ?: ""
-                        val qty = item.getLong("quantity") ?: 0
-                        val desc = item.getString("catatan") ?: ""
+                        result.documents.forEach { doc ->
 
-                        val addons = item.get("addons") as? List<Map<String, Any>> ?: emptyList()
+                            val item =
+                                doc.toObject(OrderItem::class.java)
 
-                        val addonText = if (addons.isEmpty()) {
-                            "No add-on"
-                        } else {
-                            addons.joinToString(", ") { it["name"].toString() }
+                            if (item != null) {
+                                items.add(item)
+                            }
                         }
 
-                        tvMenu.text = "Nama Menu: $nama"
-                        tvDesc.text = desc
-                        tvAddon.text = addonText
-                        tvQty.text = "Jumlah: $qty"
+                        rvItems.adapter =
+                            AdminDetailItemAdapter(items)
                     }
             }
+
+        btnSelesai.setOnClickListener {
+            updateStatus("selesai")
+        }
+
+        btnCancel.setOnClickListener {
+            updateStatus("dibatalkan")
+        }
     }
 
-    private fun updateStatus(newStatus: String) {
-        firestore.collection("orders").document(orderId)
-            .update("status", newStatus)
+    private fun updateStatus(status: String) {
+
+        val message =
+            if (status == "selesai") {
+                "Yakin ingin menyelesaikan orderan ini?"
+            } else {
+                "Yakin ingin membatalkan orderan ini?"
+            }
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Konfirmasi")
+            .setMessage(message)
+
+            .setPositiveButton("Ya") { _, _ ->
+
+                firestore.collection("orders")
+                    .document(orderId)
+                    .update("status", status)
+
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Status berhasil diupdate",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        // kembali ke halaman notification
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+
+                    .addOnFailureListener {
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Gagal update status",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+
+            .setNegativeButton("Tidak", null)
+            .show()
     }
 }

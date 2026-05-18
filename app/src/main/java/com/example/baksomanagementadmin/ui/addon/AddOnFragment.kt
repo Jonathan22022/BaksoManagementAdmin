@@ -1,19 +1,17 @@
-package com.example.baksomanagementadmin.ui
+package com.example.baksomanagementadmin.ui.addon
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
-import com.example.baksomanagementadmin.data.model.Menu
 import com.example.baksomanagementadmin.data.repository.AddOnRepository
-import com.example.baksomanagementadmin.data.repository.MenuRepository
 
 class AddOnFragment : Fragment() {
 

@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.example.baksomanagementadmin.data.repository.AuthRepository
 import com.example.baksomanagementadmin.data.repository.UserRepository
+import com.example.baksomanagementadmin.utils.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -22,6 +23,11 @@ class HomepageActivity : AppCompatActivity() {
     private val firestore = FirebaseClient.firestore
     private lateinit var imageViewProfile: ImageView
     private lateinit var tvUserName: TextView
+
+    override fun onResume() {
+        super.onResume()
+        SessionManager.saveLoginSession(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +70,7 @@ class HomepageActivity : AppCompatActivity() {
                 R.id.menu_setting -> controller.navigate(R.id.menu_setting)
                 R.id.menu_logout -> {
                     authRepository.logout()
+                    SessionManager.clearSession(this)
                     val intent =
                         Intent(this, MainActivity::class.java) // activity yg ada FirstPageFragment
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -15,6 +15,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.baksomanagementadmin.HomepageActivity
 import com.example.baksomanagementadmin.R
+import com.example.baksomanagementadmin.data.repository.AuthRepository
+import com.example.baksomanagementadmin.data.repository.UserRepository
+import com.example.baksomanagementadmin.utils.SessionManager
 import com.example.baksomanagementadmin.viewmodel.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -56,23 +59,46 @@ class LoginFragment : Fragment() {
         }
 
         viewModel.loginResult.observe(viewLifecycleOwner) { result ->
-
             Log.d(TAG, "Hasil login diterima: ${result.first}")
-
             if (result.first) {
-
-                Log.i(TAG, "Login berhasil, membuka HomepageActivity")
-
-                Toast.makeText(requireContext(), "Login Berhasil", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(requireContext(), HomepageActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish()
-
+                Log.i(TAG, "Login Firebase berhasil")
+                val userRepository = UserRepository()
+                userRepository.getCurrentUserDetail { user, error ->
+                    if (user != null) {
+                        Log.d(TAG, "Role user: ${user.role}")
+                        if (user.role == "admin") {
+                            Toast.makeText(
+                                requireContext(),
+                                "Login Berhasil",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            SessionManager.saveLoginSession(requireContext())
+                            val intent = Intent(
+                                requireContext(),
+                                HomepageActivity::class.java
+                            )
+                            startActivity(intent)
+                            requireActivity().finish()
+                        } else {
+                            Log.e(TAG, "Akses ditolak karena role bukan admin")
+                            AuthRepository().logout()
+                            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                                .setTitle("Akses Ditolak")
+                                .setMessage("User tidak dapat mengakses aplikasi admin")
+                                .setPositiveButton("OK", null)
+                                .show()
+                        }
+                    } else {
+                        Log.e(TAG, "Gagal mengambil data user: $error")
+                        Toast.makeText(
+                            requireContext(),
+                            error ?: "Data user tidak ditemukan",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             } else {
-
                 Log.e(TAG, "Login gagal: ${result.second}")
-
                 Toast.makeText(
                     requireContext(),
                     result.second ?: "Login Gagal",
@@ -82,11 +108,8 @@ class LoginFragment : Fragment() {
         }
 
         val tvForgot = view.findViewById<TextView>(R.id.tvForgotPassword)
-
         tvForgot.setOnClickListener {
-
             findNavController().navigate(R.id.action_loginFragment_to_lupaPasswordFragment)
-
         }
 
         val btnBack = view.findViewById<ImageView>(R.id.btnBack)

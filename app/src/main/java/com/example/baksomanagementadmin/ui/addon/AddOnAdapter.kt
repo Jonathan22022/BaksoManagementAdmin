@@ -1,5 +1,6 @@
-package com.example.baksomanagementadmin.ui
+package com.example.baksomanagementadmin.ui.addon
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.AddOn
-import android.util.Log
 
 class AddOnAdapter(
     private val addOnList: List<AddOn>,

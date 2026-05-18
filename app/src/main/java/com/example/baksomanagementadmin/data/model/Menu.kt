@@ -5,6 +5,6 @@ data class Menu(
     val namaMenu: String = "",
     val harga: Int = 0,
     val gambarUrl: String = "",
-    val description: String = ""
-    //val bahanList: List<BahanItem> = emptyList()
+    val description: String = "",
+    val bahanList: List<BahanItem> = emptyList()
 )

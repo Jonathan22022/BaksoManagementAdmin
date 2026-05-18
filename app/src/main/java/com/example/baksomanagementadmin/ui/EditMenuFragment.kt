@@ -15,6 +15,9 @@ import com.example.baksomanagementadmin.data.repository.MenuRepository
 import android.util.Log
 import com.bumptech.glide.Glide
 import java.io.File
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 
 class EditMenuFragment : Fragment() {
 
@@ -30,7 +33,11 @@ class EditMenuFragment : Fragment() {
     private lateinit var btnPickImage: FrameLayout
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
-
+    private lateinit var rvBahan: RecyclerView
+    private lateinit var bahanRepository: BahanBakuRepository
+    private lateinit var bahanAdapter: BahanMenuAdapter
+    private lateinit var etDescription: EditText
+    private var oldBahanList = emptyList<com.example.baksomanagementadmin.data.model.BahanItem>()
     private val TAG = "EditMenuDebug"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +63,11 @@ class EditMenuFragment : Fragment() {
         btnPickImage = view.findViewById(R.id.btnPickImage)
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
-
+        etDescription = view.findViewById(R.id.etDescription)
+        rvBahan = view.findViewById(R.id.rvBahan)
+        bahanRepository = BahanBakuRepository()
+        rvBahan.layoutManager =
+            LinearLayoutManager(requireContext())
         loadMenuData()
 
         btnPickImage.setOnClickListener {
@@ -83,20 +94,31 @@ class EditMenuFragment : Fragment() {
     private fun loadMenuData() {
         menuRepository.getMenuById(menuId) { menu ->
             menu?.let {
-                Log.d(TAG, "Menu loaded: ${it.namaMenu}, Harga: ${it.harga}")
-
+                Log.d(TAG, "Menu loaded: ${it.namaMenu}")
                 etNamaMenu.setText(it.namaMenu)
                 etHarga.setText(it.harga.toString())
-
+                etDescription.setText(it.description)
                 oldImageUrl = it.gambarUrl
-
+                oldBahanList = it.bahanList
                 if (oldImageUrl.isNotEmpty()) {
                     Glide.with(requireContext())
                         .load(oldImageUrl)
                         .into(imgPreview)
+
                     layoutPlaceholder.visibility = View.GONE
                 }
+                loadBahanData()
             }
+        }
+    }
+
+    private fun loadBahanData() {
+        bahanRepository.getBahanBakuList { list ->
+            bahanAdapter = BahanMenuAdapter(
+                list,
+                oldBahanList
+            )
+            rvBahan.adapter = bahanAdapter
         }
     }
 
@@ -105,7 +127,8 @@ class EditMenuFragment : Fragment() {
 
         val namaMenu = etNamaMenu.text.toString()
         val harga = etHarga.text.toString().toIntOrNull() ?: 0
-
+        val description = etDescription.text.toString()
+        val bahanList = bahanAdapter.getSelectedBahan()
         if (namaMenu.isEmpty()) {
             Toast.makeText(requireContext(), "Nama menu wajib diisi", Toast.LENGTH_SHORT).show()
             return
@@ -130,11 +153,15 @@ class EditMenuFragment : Fragment() {
         harga: Int,
         imageUrl: String
     ) {
+        val description = etDescription.text.toString()
+        val bahanList = bahanAdapter.getSelectedBahan()
         val updatedMenu = Menu(
             id = menuId,
             namaMenu = namaMenu,
             harga = harga,
-            gambarUrl = imageUrl
+            gambarUrl = imageUrl,
+            description = description,
+            bahanList = bahanList
         )
 
         menuRepository.updateMenu(updatedMenu,

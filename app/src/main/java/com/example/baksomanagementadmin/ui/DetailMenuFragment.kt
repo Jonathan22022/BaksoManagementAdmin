@@ -90,7 +90,6 @@ class DetailMenuFragment : Fragment() {
 
     }
 
-
     private fun updateTotal() {
         val total = (basePrice + selectedAddonPrice) * quantity
         tvTotal.text = "Rp. $total"

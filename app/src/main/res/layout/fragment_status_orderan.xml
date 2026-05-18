@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!--Tambahkan id orderannya dengan user pemesannya-->
         <!-- STATUS -->
         <TextView
             android:text="Status Orderan"
@@ -144,28 +145,6 @@
 
         </LinearLayout>
 
-        <!-- LOKASI -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:background="@drawable/bg_card_pink"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@drawable/ic_location"
-                android:layout_width="20dp"
-                android:layout_height="20dp"/>
-
-            <TextView
-                android:text="UMN, Gedung B, Ruangan 504"
-                android:layout_marginStart="8dp"
-                android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
-        </LinearLayout>
-
         <!-- TOTAL -->
         <LinearLayout
             android:orientation="horizontal"
@@ -186,6 +165,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"/>
         </LinearLayout>
+
+        <!--Tambahkan button untuk selesaikan orderan dan cencel orderan dan jika ditekan maka status pesanan akan berubah sesuai dengan button yang dipilih-->
 
     </LinearLayout>
 

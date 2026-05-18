@@ -20,6 +20,7 @@
         android:orientation="vertical"
         android:layout_marginStart="10dp">
 
+        <!--Id menggunakan id dari orderannya-->
         <TextView
             android:id="@+id/tvId"
             android:textStyle="bold"
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <!--Nama dihubungkan dari userId pada data collection order kemudian dicocokkan dengan id di collection users untuk mencari namanya-->
         <TextView
             android:id="@+id/tvNama"
             android:textStyle="bold"

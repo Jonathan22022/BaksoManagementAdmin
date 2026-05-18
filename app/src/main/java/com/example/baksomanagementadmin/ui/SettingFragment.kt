@@ -16,6 +16,7 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.google.firebase.auth.FirebaseAuth
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 
 class SettingFragment : Fragment() {
 
@@ -46,12 +47,10 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        setupNotificationSwitch(view)
+
         view.findViewById<View>(R.id.btnAccount).setOnClickListener {
             showEditProfileDialog()
-        }
-
-        view.findViewById<View>(R.id.btnNotification).setOnClickListener {
-            /**setupNotificationSwitch()**/
         }
 
         view.findViewById<View>(R.id.btnLanguage).setOnClickListener {
@@ -118,6 +117,71 @@ class SettingFragment : Fragment() {
             }
         }
     }**/
+
+    private fun setupNotificationSwitch(view: View) {
+
+        val switchNotification = view.findViewById<Switch>(R.id.switchNotification)
+
+        val sharedPref = requireActivity()
+            .getSharedPreferences(
+                "app_settings",
+                AppCompatActivity.MODE_PRIVATE
+            )
+
+        val isEnabled = sharedPref.getBoolean(
+            "global_notification",
+            true
+        )
+
+        switchNotification.isChecked = isEnabled
+
+        switchNotification.setOnCheckedChangeListener { _, isChecked ->
+
+            if (!isChecked) {
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Matikan Notifikasi?")
+                    .setMessage(
+                        "Notifikasi order tidak akan muncul lagi."
+                    )
+                    .setPositiveButton("Ya") { _, _ ->
+
+                        sharedPref.edit()
+                            .putBoolean(
+                                "global_notification",
+                                false
+                            )
+                            .apply()
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Notifikasi dimatikan",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .setNegativeButton("Batal") { _, _ ->
+
+                        switchNotification.isChecked = true
+                    }
+                    .show()
+
+            } else {
+
+                sharedPref.edit()
+                    .putBoolean(
+                        "global_notification",
+                        true
+                    )
+                    .apply()
+
+                Toast.makeText(
+                    requireContext(),
+                    "Notifikasi diaktifkan",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 
     private fun deleteAccount() {
 

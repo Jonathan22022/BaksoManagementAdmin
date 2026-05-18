@@ -79,7 +79,8 @@ class AddBahanBakuFragment : Fragment() {
                         nama = nama,
                         harga = harga,
                         berat = berat,
-                        gambarUrl = url
+                        gambarUrl = url,
+                        createdAt = System.currentTimeMillis()
                     )
 
                     BahanBakuRepository.addBahanBaku(

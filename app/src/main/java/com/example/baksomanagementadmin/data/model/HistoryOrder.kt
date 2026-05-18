@@ -1,13 +1,13 @@
 package com.example.baksomanagementadmin.data.model
 
-data class AdminOrderItem(
+data class HistoryOrder(
     val orderId: String = "",
     val userID: String = "",
-    val createdAt: Long = 0,
     val nama: String = "",
     val imageUrl: String = "",
+    val createdAt: Long = 0L,
+    val status: String = "",
     val addons: List<AddOn> = emptyList(),
     val quantity: Int = 0,
-    val total: Int = 0,
-    val status: String = ""
+    val total: Int = 0
 )

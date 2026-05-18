@@ -1,9 +1,16 @@
-package com.example.baksomanagementadmin.ui
+package com.example.baksomanagementadmin.ui.addon
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.cloudinary.android.MediaManager
