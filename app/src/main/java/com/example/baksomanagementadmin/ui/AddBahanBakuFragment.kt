@@ -20,6 +20,8 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.BahanBaku
 import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 import java.io.File
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 
 class AddBahanBakuFragment : Fragment() {
 
@@ -43,7 +45,17 @@ class AddBahanBakuFragment : Fragment() {
         val etNama = view.findViewById<EditText>(R.id.etNamaMenu)
         val etHarga = view.findViewById<EditText>(R.id.etHarga)
         val etBerat = view.findViewById<EditText>(R.id.etBerat)
+        val spSatuan = view.findViewById<Spinner>(R.id.spSatuan)
+        val satuanList = listOf("kg", "liter")
 
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            satuanList
+        )
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spSatuan.adapter = adapter
         BahanBakuRepository = BahanBakuRepository()
 
         btnSubmit.setOnClickListener {
@@ -51,6 +63,7 @@ class AddBahanBakuFragment : Fragment() {
             val nama = etNama.text.toString()
             val harga = etHarga.text.toString().toIntOrNull() ?: 0
             val berat = etBerat.text.toString().toDoubleOrNull() ?: 0.0
+            val satuan = spSatuan.selectedItem.toString()
 
             if (nama.isEmpty()) {
                 Toast.makeText(requireContext(), "Nama wajib diisi", Toast.LENGTH_SHORT).show()
@@ -79,6 +92,7 @@ class AddBahanBakuFragment : Fragment() {
                         nama = nama,
                         harga = harga,
                         berat = berat,
+                        satuan = satuan,
                         gambarUrl = url,
                         createdAt = System.currentTimeMillis()
                     )

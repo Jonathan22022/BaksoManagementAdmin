@@ -1,14 +1,13 @@
 package com.example.baksomanagementadmin.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +15,27 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.OrderItem
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 
-class DetailOrderanFragment : Fragment() {
+class DetailOrderanFragment : Fragment(R.layout.fragment_detail_orderan) {
 
     private val firestore = FirebaseClient.firestore
 
+    private lateinit var tvTitle: TextView
+    private lateinit var tvUser: TextView
+
+    private lateinit var rvItems: RecyclerView
+    private lateinit var spStatus: Spinner
+
+    private lateinit var btnSelesai: Button
+    private lateinit var btnCancel: Button
+
     private var orderId: String = ""
+
+    private val statusList = listOf(
+        "pending",
+        "diproses",
+        "selesai",
+        "dibatalkan"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,102 +43,155 @@ class DetailOrderanFragment : Fragment() {
         orderId = arguments?.getString("ORDER_ID") ?: ""
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+    override fun onViewCreated(
+        view: View,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_detail_orderan, container, false)
-    }
-
-    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
-        val tvUser = view.findViewById<TextView>(R.id.tvUser)
+        initViews(view)
 
-        val rvItems = view.findViewById<RecyclerView>(R.id.rvItems)
+        setupRecyclerView()
 
-        val btnSelesai = view.findViewById<Button>(R.id.btnSelesai)
-        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
+        setupSpinner()
 
-        val spStatus = view.findViewById<Spinner>(R.id.spStatus)
+        loadOrderDetail()
 
-        rvItems.layoutManager = LinearLayoutManager(requireContext())
+        btnSelesai.setOnClickListener {
+            showConfirmationDialog("selesai")
+        }
 
-        val statusList = listOf(
-            "pending",
-            "diproses",
-            "selesai",
-            "dibatalkan"
-        )
+        btnCancel.setOnClickListener {
+            showConfirmationDialog("dibatalkan")
+        }
+
+        val btnUpdateStatus =
+            view.findViewById<Button>(R.id.btnUpdateStatus)
+
+        btnUpdateStatus.setOnClickListener {
+
+            val selectedStatus =
+                spStatus.selectedItem.toString()
+
+            updateStatus(selectedStatus)
+        }
+    }
+
+    private fun initViews(view: View) {
+
+        tvTitle = view.findViewById(R.id.tvTitle)
+        tvUser = view.findViewById(R.id.tvUser)
+
+        rvItems = view.findViewById(R.id.rvItems)
+        spStatus = view.findViewById(R.id.spStatus)
+
+        btnSelesai = view.findViewById(R.id.btnSelesai)
+        btnCancel = view.findViewById(R.id.btnCancel)
+    }
+
+    private fun setupRecyclerView() {
+
+        rvItems.layoutManager =
+            LinearLayoutManager(requireContext())
+    }
+
+    private fun setupSpinner() {
 
         val adapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            android.R.layout.simple_spinner_dropdown_item,
             statusList
         )
 
-        adapter.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item
-        )
-
         spStatus.adapter = adapter
+    }
+
+    private fun loadOrderDetail() {
 
         firestore.collection("orders")
             .document(orderId)
             .get()
             .addOnSuccessListener { orderDoc ->
 
+                if (!orderDoc.exists()) {
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Order tidak ditemukan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    return@addOnSuccessListener
+                }
+
                 val userId =
-                    orderDoc.getString("userID") ?: ""
+                    orderDoc.getString("userID") ?: "-"
 
                 val status =
                     orderDoc.getString("status") ?: "pending"
 
                 tvTitle.text = "Orderan #$orderId"
 
-                tvUser.text = "User ID: $userId"
+                tvUser.text = "User ID : $userId"
 
-                val pos = statusList.indexOf(status)
+                val selectedPosition =
+                    statusList.indexOf(status)
 
-                if (pos >= 0) {
-                    spStatus.setSelection(pos)
+                if (selectedPosition >= 0) {
+                    spStatus.setSelection(selectedPosition)
                 }
 
-                firestore.collection("orders")
-                    .document(orderId)
-                    .collection("items")
-                    .get()
-                    .addOnSuccessListener { result ->
-
-                        val items = mutableListOf<OrderItem>()
-
-                        result.documents.forEach { doc ->
-
-                            val item =
-                                doc.toObject(OrderItem::class.java)
-
-                            if (item != null) {
-                                items.add(item)
-                            }
-                        }
-
-                        rvItems.adapter =
-                            AdminDetailItemAdapter(items)
-                    }
+                loadOrderItems()
             }
+            .addOnFailureListener {
 
-        btnSelesai.setOnClickListener {
-            updateStatus("selesai")
-        }
-
-        btnCancel.setOnClickListener {
-            updateStatus("dibatalkan")
-        }
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal mengambil data order",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
-    private fun updateStatus(status: String) {
+    private fun loadOrderItems() {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val itemList =
+                    mutableListOf<OrderItem>()
+
+                result.documents.forEach { document ->
+
+                    val item =
+                        document.toObject(
+                            OrderItem::class.java
+                        )
+
+                    if (item != null) {
+                        itemList.add(item)
+                    }
+                }
+
+                rvItems.adapter =
+                    AdminDetailItemAdapter(itemList)
+            }
+            .addOnFailureListener {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal mengambil item order",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun showConfirmationDialog(
+        status: String
+    ) {
 
         val message =
             if (status == "selesai") {
@@ -132,39 +200,50 @@ class DetailOrderanFragment : Fragment() {
                 "Yakin ingin membatalkan orderan ini?"
             }
 
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext())
             .setTitle("Konfirmasi")
             .setMessage(message)
 
             .setPositiveButton("Ya") { _, _ ->
 
-                firestore.collection("orders")
-                    .document(orderId)
-                    .update("status", status)
-
-                    .addOnSuccessListener {
-
-                        Toast.makeText(
-                            requireContext(),
-                            "Status berhasil diupdate",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        // kembali ke halaman notification
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-
-                    .addOnFailureListener {
-
-                        Toast.makeText(
-                            requireContext(),
-                            "Gagal update status",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                updateStatus(status)
             }
 
-            .setNegativeButton("Tidak", null)
+            .setNegativeButton(
+                "Tidak",
+                null
+            )
             .show()
+    }
+
+    private fun updateStatus(
+        status: String
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .update("status", status)
+
+            .addOnSuccessListener {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Status berhasil diperbarui",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                requireActivity()
+                    .onBackPressedDispatcher
+                    .onBackPressed()
+            }
+
+            .addOnFailureListener {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal memperbarui status",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }

@@ -51,9 +51,6 @@ class HomepageFragment : Fragment() {
 
             val adapter = MenuAdapter(
                 menuList,
-                onItemClick = { selectedMenu ->
-                    openDetailMenu(selectedMenu)
-                },
                 onEditClick = { menu ->
                     val bundle = Bundle().apply {
                         putString("MENU_ID", menu.id)
@@ -78,16 +75,5 @@ class HomepageFragment : Fragment() {
 
             recyclerView.adapter = adapter
         }
-    }
-
-    private fun openDetailMenu(menu: Menu) {
-        val bundle = Bundle().apply {
-            putString("MENU_ID", menu.id)
-        }
-
-        findNavController().navigate(
-            R.id.action_homepageFragment_to_detailMenuFragment,
-            bundle
-        )
     }
 }

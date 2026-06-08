@@ -14,6 +14,8 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.BahanBaku
 import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 import java.io.File
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 
 class EditBahanBakuFragment : Fragment() {
 
@@ -26,9 +28,9 @@ class EditBahanBakuFragment : Fragment() {
     private lateinit var layoutPlaceholder: LinearLayout
     private lateinit var btnPickImage: FrameLayout
     private lateinit var btnSubmit: Button
-
+    private lateinit var spSatuan: Spinner
     private val TAG = "EditBahanBakuDebug"
-
+    private val satuanList = listOf("kg", "liter")
     private var imageUri: Uri? = null
     private var currentImageUrl: String = ""
     private var bahanId: String = ""
@@ -51,7 +53,15 @@ class EditBahanBakuFragment : Fragment() {
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
         btnPickImage = view.findViewById(R.id.btnPickImage)
         btnSubmit = view.findViewById(R.id.btnSubmit)
-
+        spSatuan = view.findViewById(R.id.spSatuan)
+        val satuanList = listOf("kg", "liter")
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            satuanList
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spSatuan.adapter = adapter
         btnSubmit.text = "Update Bahan Baku"
 
         loadData()
@@ -79,7 +89,11 @@ class EditBahanBakuFragment : Fragment() {
                 Glide.with(requireContext())
                     .load(data.gambarUrl)
                     .into(imgPreview)
+                val posisi = satuanList.indexOf(data.satuan)
 
+                if (posisi >= 0) {
+                    spSatuan.setSelection(posisi)
+                }
                 layoutPlaceholder.visibility = View.GONE
             }
         }
@@ -91,7 +105,7 @@ class EditBahanBakuFragment : Fragment() {
         val nama = etNama.text.toString()
         val harga = etHarga.text.toString().toIntOrNull() ?: 0
         val berat = etBerat.text.toString().toDoubleOrNull() ?: 0.0
-
+        val satuan = spSatuan.selectedItem.toString()
         if (nama.isEmpty()) {
             toast("Nama wajib diisi")
             return
@@ -101,13 +115,13 @@ class EditBahanBakuFragment : Fragment() {
             // upload gambar baru
             uploadImageToCloudinary(imageUri!!,
                 onSuccess = { url ->
-                    saveToFirestore(nama, harga, berat, url)
+                    saveToFirestore(nama, harga, berat,satuan, url)
                 },
                 onError = { toast(it) }
             )
         } else {
             // pakai gambar lama
-            saveToFirestore(nama, harga, berat, currentImageUrl)
+            saveToFirestore(nama, harga, berat, satuan,currentImageUrl)
         }
     }
 
@@ -115,6 +129,7 @@ class EditBahanBakuFragment : Fragment() {
         nama: String,
         harga: Int,
         berat: Double,
+        satuan: String,
         imageUrl: String
     ) {
         val updated = BahanBaku(
@@ -122,6 +137,7 @@ class EditBahanBakuFragment : Fragment() {
             nama = nama,
             harga = harga,
             berat = berat,
+            satuan = satuan,
             gambarUrl = imageUrl
         )
 

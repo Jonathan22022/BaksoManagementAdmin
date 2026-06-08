@@ -1,4 +1,8 @@
+<!--bg_setting_title.xml-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#F1A7A7"/>
-    <corners android:radius="14dp"/>
+    <solid android:color="@color/setting_card"/>
+    <corners android:radius="18dp"/>
+    <stroke
+        android:width="1dp"
+        android:color="@color/setting_stroke"/>
 </shape>

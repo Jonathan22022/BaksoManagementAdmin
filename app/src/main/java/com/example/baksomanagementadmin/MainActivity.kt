@@ -8,10 +8,14 @@ import com.example.baksomanagementadmin.ui.FirstPageFragment
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.utils.NotificationHelper
 import com.example.baksomanagementadmin.utils.SessionManager
+import com.example.baksomanagementadmin.utils.ThemeManager
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyTheme(
+            ThemeManager.getTheme(this)
+        )
         super.onCreate(savedInstanceState)
         CloudinaryClient.init(this)
         NotificationHelper.createChannel(this)

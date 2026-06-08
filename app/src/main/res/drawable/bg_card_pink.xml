@@ -1,4 +1,12 @@
+<!--bg_card_pink.xml-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#F2A7A7"/>
+
+    <solid android:color="@color/setting_card"/>
+
     <corners android:radius="20dp"/>
+
+    <stroke
+        android:width="1dp"
+        android:color="@color/setting_stroke"/>
+
 </shape>

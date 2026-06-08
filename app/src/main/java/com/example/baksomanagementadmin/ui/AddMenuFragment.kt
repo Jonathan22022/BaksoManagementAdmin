@@ -32,27 +32,47 @@ class AddMenuFragment : Fragment() {
 
     private var imageUri: Uri? = null
 
-    private val TAG = "AddMenuDebug"
+    companion object {
+        private const val TAG = "AddMenuDebug"
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_add_menu, container, false)
+
+        Log.d(TAG, "onCreateView called")
+
+        return inflater.inflate(
+            R.layout.fragment_add_menu,
+            container,
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        super.onViewCreated(view, savedInstanceState)
+
+        Log.d(TAG, "onViewCreated called")
+
         btnPickImage = view.findViewById(R.id.btnPickImage)
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
+
         menuRepository = MenuRepository()
-        rvBahan = view.findViewById(R.id.rvBahan)
         bahanRepository = BahanBakuRepository()
-        rvBahan.layoutManager =
-            LinearLayoutManager(requireContext())
+
+        rvBahan = view.findViewById(R.id.rvBahan)
+        rvBahan.layoutManager = LinearLayoutManager(requireContext())
+
+        Log.d(TAG, "RecyclerView initialized")
+
         loadBahanBaku()
+
         btnPickImage.setOnClickListener {
+            Log.d(TAG, "Pick Image Button Clicked")
             pickImageLauncher.launch("image/*")
         }
 
@@ -60,24 +80,67 @@ class AddMenuFragment : Fragment() {
 
         btnSubmit.setOnClickListener {
 
-            val namaMenu = view.findViewById<EditText>(R.id.etNamaMenu).text.toString()
-            val description = view.findViewById<EditText>(R.id.etDescription).text.toString()
+            Log.d(TAG, "================================")
+            Log.d(TAG, "Submit Button Clicked")
+            Log.d(TAG, "================================")
+
+            val namaMenu =
+                view.findViewById<EditText>(R.id.etNamaMenu)
+                    .text.toString()
+
+            val description =
+                view.findViewById<EditText>(R.id.etDescription)
+                    .text.toString()
+
+            val harga =
+                view.findViewById<EditText>(R.id.etHarga)
+                    .text.toString()
+                    .toIntOrNull() ?: 0
+
             val bahanList =
                 bahanAdapter.getSelectedBahan()
-            val harga = view.findViewById<EditText>(R.id.etHarga).text.toString().toIntOrNull() ?: 0
+
+            Log.d(TAG, "Nama Menu : $namaMenu")
+            Log.d(TAG, "Description : $description")
+            Log.d(TAG, "Harga : $harga")
+            Log.d(TAG, "Image Uri : $imageUri")
+            Log.d(TAG, "Jumlah Bahan Dipilih : ${bahanList.size}")
 
             if (namaMenu.isEmpty()) {
-                Toast.makeText(requireContext(), "Nama menu wajib diisi", Toast.LENGTH_SHORT).show()
+
+                Log.e(TAG, "VALIDATION FAILED -> Nama menu kosong")
+
+                Toast.makeText(
+                    requireContext(),
+                    "Nama menu wajib diisi",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
             if (imageUri == null) {
-                Toast.makeText(requireContext(), "Pilih gambar dulu!", Toast.LENGTH_SHORT).show()
+
+                Log.e(TAG, "VALIDATION FAILED -> Gambar belum dipilih")
+
+                Toast.makeText(
+                    requireContext(),
+                    "Pilih gambar dulu!",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
-            uploadImageToCloudinary(imageUri!!,
+            Log.d(TAG, "Validation passed")
+            Log.d(TAG, "Starting Cloudinary Upload")
+
+            uploadImageToCloudinary(
+                imageUri!!,
                 onSuccess = { imageUrl ->
+
+                    Log.d(TAG, "Cloudinary URL Received")
+                    Log.d(TAG, "Image URL = $imageUrl")
 
                     val menu = Menu(
                         namaMenu = namaMenu,
@@ -87,57 +150,136 @@ class AddMenuFragment : Fragment() {
                         bahanList = bahanList
                     )
 
-                    menuRepository.addMenu(menu,
+                    Log.d(TAG, "Menu Object Created")
+                    Log.d(TAG, menu.toString())
+
+                    Log.d(TAG, "Saving Menu To Firestore")
+
+                    menuRepository.addMenu(
+                        menu,
                         onSuccess = {
-                            Toast.makeText(requireContext(), "Menu berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+
+                            Log.d(
+                                TAG,
+                                "Firestore SUCCESS -> Menu berhasil disimpan"
+                            )
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Menu berhasil ditambahkan",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
-                        onError = {
-                            Toast.makeText(requireContext(), "Firestore gagal: ${it.message}", Toast.LENGTH_SHORT).show()
+                        onError = { exception ->
+
+                            Log.e(
+                                TAG,
+                                "Firestore ERROR",
+                                exception
+                            )
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Firestore gagal: ${exception.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     )
                 },
-                onError = {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                onError = { error ->
+
+                    Log.e(
+                        TAG,
+                        "Cloudinary Upload Failed : $error"
+                    )
+
+                    Toast.makeText(
+                        requireContext(),
+                        error,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             )
-
-            Log.d(TAG, "Submit clicked")
-            Log.d(TAG, "Nama Menu: $namaMenu")
-            Log.d(TAG, "Harga: $harga")
-            Log.d(TAG, "ImageUri: $imageUri")
         }
     }
 
     private fun loadBahanBaku() {
 
+        Log.d(TAG, "Loading Bahan Baku")
+
         bahanRepository.getBahanBakuList { list ->
+
+            Log.d(
+                TAG,
+                "Bahan Baku Loaded Successfully"
+            )
+
+            Log.d(
+                TAG,
+                "Total Bahan Baku = ${list.size}"
+            )
+
+            list.forEachIndexed { index, bahan ->
+
+                Log.d(
+                    TAG,
+                    "Bahan[$index] => ${bahan.nama}"
+                )
+            }
 
             bahanAdapter = BahanMenuAdapter(list)
 
             rvBahan.adapter = bahanAdapter
+
+            Log.d(TAG, "RecyclerView Adapter Set")
         }
     }
+
     private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        registerForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri ->
+
             imageUri = uri
+
             if (uri != null) {
+
+                Log.d(TAG, "Image Selected")
+                Log.d(TAG, "Uri = $uri")
+
                 imgPreview.setImageURI(uri)
                 layoutPlaceholder.visibility = View.GONE
-                Log.d(TAG, "Image selected: $uri")
+
             } else {
-                Log.d(TAG, "Image selection cancelled")
+
+                Log.e(TAG, "Image Selection Cancelled")
             }
         }
 
     private fun uriToFile(uri: Uri): File {
-        val inputStream = requireContext().contentResolver.openInputStream(uri)
-        val file = File(requireContext().cacheDir, "upload_image.jpg")
+
+        Log.d(TAG, "Converting Uri To File")
+        Log.d(TAG, "Uri = $uri")
+
+        val inputStream =
+            requireContext().contentResolver
+                .openInputStream(uri)
+
+        val file =
+            File(
+                requireContext().cacheDir,
+                "upload_image.jpg"
+            )
 
         inputStream.use { input ->
             file.outputStream().use { output ->
                 input?.copyTo(output)
             }
         }
+
+        Log.d(TAG, "File Created")
+        Log.d(TAG, "Path = ${file.absolutePath}")
+        Log.d(TAG, "Size = ${file.length()} bytes")
 
         return file
     }
@@ -147,31 +289,109 @@ class AddMenuFragment : Fragment() {
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
+
+        Log.d(TAG, "uploadImageToCloudinary() called")
+
         val file = uriToFile(uri)
 
-        MediaManager.get().upload(file.path)
+        MediaManager.get()
+            .upload(file.path)
             .callback(object : UploadCallback {
 
                 override fun onStart(requestId: String?) {
-                    Log.d(TAG, "Upload started")
+
+                    Log.d(
+                        TAG,
+                        "Cloudinary Upload Started"
+                    )
+
+                    Log.d(
+                        TAG,
+                        "RequestId = $requestId"
+                    )
                 }
 
-                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                    Log.d(TAG, "Uploading: $bytes / $totalBytes")
+                override fun onProgress(
+                    requestId: String?,
+                    bytes: Long,
+                    totalBytes: Long
+                ) {
+
+                    val percent =
+                        ((bytes.toDouble() / totalBytes.toDouble()) * 100).toInt()
+
+                    Log.d(
+                        TAG,
+                        "Uploading... $percent%"
+                    )
                 }
 
-                override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                    val url = resultData?.get("secure_url").toString()
-                    Log.d(TAG, "Upload SUCCESS: $url")
+                override fun onSuccess(
+                    requestId: String?,
+                    resultData: MutableMap<Any?, Any?>?
+                ) {
+
+                    Log.d(
+                        TAG,
+                        "Cloudinary SUCCESS"
+                    )
+
+                    Log.d(
+                        TAG,
+                        "Result Data = $resultData"
+                    )
+
+                    val url =
+                        resultData?.get("secure_url").toString()
+
+                    Log.d(
+                        TAG,
+                        "Secure URL = $url"
+                    )
+
                     onSuccess(url)
                 }
 
-                override fun onError(requestId: String?, error: ErrorInfo?) {
-                    Log.e(TAG, "Upload ERROR: ${error?.description}")
-                    onError(error?.description ?: "Upload gagal")
+                override fun onError(
+                    requestId: String?,
+                    error: ErrorInfo?
+                ) {
+
+                    Log.e(
+                        TAG,
+                        "Cloudinary ERROR"
+                    )
+
+                    Log.e(
+                        TAG,
+                        "Description = ${error?.description}"
+                    )
+
+                    Log.e(
+                        TAG,
+                        "Code = ${error?.code}"
+                    )
+
+                    onError(
+                        error?.description ?: "Upload gagal"
+                    )
                 }
 
-                override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                override fun onReschedule(
+                    requestId: String?,
+                    error: ErrorInfo?
+                ) {
+
+                    Log.w(
+                        TAG,
+                        "Upload Rescheduled"
+                    )
+
+                    Log.w(
+                        TAG,
+                        "Reason = ${error?.description}"
+                    )
+                }
             })
             .dispatch()
     }

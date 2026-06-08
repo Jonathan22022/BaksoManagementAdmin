@@ -1,4 +1,8 @@
+<!--bg_card_white.xml-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF"/>
+
+    <solid android:color="@color/setting_card"/>
+
     <corners android:radius="20dp"/>
+
 </shape>

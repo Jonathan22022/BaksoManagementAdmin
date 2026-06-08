@@ -17,6 +17,7 @@ import com.example.baksomanagementadmin.data.repository.HistoryOrderRepository
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.widget.TextView
 
 class HistoryOrderFragment : Fragment() {
 
@@ -24,9 +25,9 @@ class HistoryOrderFragment : Fragment() {
 
     private lateinit var etSearch: EditText
 
-    private lateinit var btnSelesai: Button
+    private lateinit var btnSelesai: TextView
 
-    private lateinit var btnCancel: Button
+    private lateinit var btnCancel: TextView
 
     private val repository = HistoryOrderRepository()
 
@@ -61,11 +62,13 @@ class HistoryOrderFragment : Fragment() {
 
         btnSelesai.setOnClickListener {
             currentStatus = "selesai"
+            switchTab(true)
             filterData()
         }
 
         btnCancel.setOnClickListener {
             currentStatus = "dibatalkan"
+            switchTab(false)
             filterData()
         }
 
@@ -125,5 +128,25 @@ class HistoryOrderFragment : Fragment() {
         }
 
         rv.adapter = HistoryOrderAdapter(filtered)
+    }
+
+    private fun switchTab(isSelesai: Boolean) {
+
+        if (isSelesai) {
+
+            btnSelesai.setBackgroundResource(R.drawable.bg_tab_active)
+            btnCancel.setBackgroundResource(android.R.color.transparent)
+
+            btnSelesai.setTextColor(resources.getColor(android.R.color.white))
+            btnCancel.setTextColor(resources.getColor(R.color.dark_red))
+
+        } else {
+
+            btnCancel.setBackgroundResource(R.drawable.bg_tab_active)
+            btnSelesai.setBackgroundResource(android.R.color.transparent)
+
+            btnCancel.setTextColor(resources.getColor(android.R.color.white))
+            btnSelesai.setTextColor(resources.getColor(R.color.dark_red))
+        }
     }
 }

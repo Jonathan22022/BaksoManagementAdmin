@@ -17,7 +17,7 @@
         android:title="Weekly Insight"
         android:icon="@drawable/ic_weekly_insight"/>
     <item
-        android:id="@+id/menu_account"
-        android:title="Account"
-        android:icon="@drawable/ic_account_"/>
+        android:id="@+id/menu_notification"
+        android:title="Notification"
+        android:icon="@drawable/ic_notification"/>
 </menu>

@@ -68,7 +68,7 @@ class HistoryOrderAdapter(
             "Jumlah: ${item.quantity}"
 
         holder.tvStatus.text =
-            "Status: ${item.status}"
+            item.status.replaceFirstChar { it.uppercase() }
 
         holder.tvTotal.text =
             "Rp ${item.total}"
@@ -81,8 +81,20 @@ class HistoryOrderAdapter(
         holder.tvDate.text =
             sdf.format(Date(item.createdAt))
 
+        if (item.status == "selesai") {
+            holder.tvStatus.setTextColor(
+                android.graphics.Color.parseColor("#2E7D32")
+            )
+        } else {
+            holder.tvStatus.setTextColor(
+                android.graphics.Color.parseColor("#D32F2F")
+            )
+        }
+
         Glide.with(holder.imgMenu.context)
             .load(item.imageUrl)
+            .placeholder(R.drawable.bakso)
+            .error(R.drawable.bakso)
             .into(holder.imgMenu)
     }
 }

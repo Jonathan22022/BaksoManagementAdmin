@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--nav_item_color.xml-->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/nav_red" android:state_checked="true" />
-    <item android:color="@color/nav_grey" android:state_checked="false" />
+
+    <item
+        android:state_checked="true"
+        android:color="@color/bottom_nav_active"/>
+
+    <item
+        android:color="@color/bottom_nav_inactive"/>
+
 </selector>

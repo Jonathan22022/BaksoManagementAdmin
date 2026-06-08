@@ -29,6 +29,7 @@
             android:text="Nama User"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@color/setting_text"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"/>
 
@@ -40,7 +41,7 @@
             android:text="email@gmail.com"
             android:textSize="14sp"
             android:layout_gravity="center"
-            android:textColor="#777777"/>
+            android:textColor="@color/text_3"/>
 
         <!-- CARD INFO USER -->
         <LinearLayout
@@ -55,6 +56,7 @@
                 android:text="Nomor Telepon"
                 android:textStyle="bold"
                 android:textSize="14sp"
+                android:textColor="@color/setting_text"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"/>
 
@@ -62,6 +64,7 @@
                 android:id="@+id/tvPhone"
                 android:text="08123456789"
                 android:layout_marginBottom="10dp"
+                android:textColor="@color/setting_text"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"/>
 
@@ -69,6 +72,7 @@
                 android:text="Usia Akun"
                 android:textStyle="bold"
                 android:textSize="14sp"
+                android:textColor="@color/setting_text"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -76,6 +80,7 @@
             <TextView
                 android:id="@+id/tvAccountAge"
                 android:text="0 hari"
+                android:textColor="@color/setting_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

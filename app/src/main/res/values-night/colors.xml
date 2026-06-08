@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--background dark-->
+    <color name="bg">#121212</color>
+    <color name="bg_end_firstpage">#1E1E1E</color>
+    <color name="bg_btnregister">#2A2A2A</color>
+    <color name="setting_card">#1E1E1E</color>
+    <color name="setting_text">#FFFFFF</color>
+    <color name="setting_stroke">#333333</color>
+    <color name="input_bg">#2A2A2A</color>
+    <color name="input_border">#444444</color>
+    <color name="primary_title">#FFB4B4</color>
+    <color name="text_secondary">#999999</color>
+    <color name="text_3">#777777</color>
+    <color name="text_4">#D50000</color>
+    <color name="drawer_bg">#1E1E1E</color>
+    <color name="drawer_text">#FFFFFF</color>
+    <color name="drawer_icon">#FFFFFF</color>
+    <color name="bottom_nav_bg">#1E1E1E</color>
+    <color name="bottom_nav_active">#FF5252</color>
+    <color name="bottom_nav_inactive">#AAAAAA</color>
+</resources>

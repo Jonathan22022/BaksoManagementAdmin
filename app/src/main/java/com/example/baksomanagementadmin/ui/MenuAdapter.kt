@@ -13,7 +13,6 @@ import android.util.Log
 
 class MenuAdapter(
     private val menuList: List<Menu>,
-    private val onItemClick: (Menu) -> Unit,
     private val onEditClick: (Menu) -> Unit,
     private val onDeleteClick: (Menu) -> Unit
 ) : RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
@@ -33,7 +32,7 @@ class MenuAdapter(
         Log.d(TAG, "onCreateViewHolder called")
 
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_menu, parent, false)
+            .inflate(R.layout.item_menu_admin, parent, false)
 
         Log.d(TAG, "ViewHolder created")
 
@@ -52,8 +51,12 @@ class MenuAdapter(
         Log.d(TAG, "onBindViewHolder position: $position, id: ${menu.id}, nama: ${menu.namaMenu}")
 
         holder.name.text = menu.namaMenu
+
         holder.desc.text = menu.description
-        holder.price.text = "Rp. ${menu.harga}"
+
+        holder.price.text =
+            "Rp %,d".format(menu.harga)
+                .replace(',', '.')
 
         if (menu.gambarUrl.isNullOrEmpty()) {
             Log.w(TAG, "Image URL kosong untuk menu id: ${menu.id}")
@@ -62,11 +65,6 @@ class MenuAdapter(
         Glide.with(holder.itemView.context)
             .load(menu.gambarUrl)
             .into(holder.image)
-
-        holder.itemView.setOnClickListener {
-            Log.d(TAG, "Item clicked: ${menu.id}")
-            onItemClick(menu)
-        }
 
         holder.btnEdit.setOnClickListener {
             Log.d(TAG, "Edit clicked: ${menu.id}")

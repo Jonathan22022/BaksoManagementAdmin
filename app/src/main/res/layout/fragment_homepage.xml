@@ -14,7 +14,7 @@
         android:text="Menu"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:textColor="#7A2E2E"
+        android:textColor="@color/primary_title"
         android:gravity="center"
         android:padding="12dp"
         android:background="@drawable/bg_menu_title"
@@ -31,9 +31,81 @@
         android:layout_marginBottom="12dp"/>
 
     <!-- List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMenu"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- HEADER -->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:background="@color/setting_card"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Gambar"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Nama Menu"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Deskripsi"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Harga"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Edit"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Hapus"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
 </LinearLayout>

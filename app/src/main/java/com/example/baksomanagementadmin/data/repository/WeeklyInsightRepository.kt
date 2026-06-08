@@ -19,26 +19,26 @@ class WeeklyInsightRepository {
             .get()
             .addOnSuccessListener { result ->
 
-                val incomeMap = mutableMapOf(
-                    "Sen" to 0f,
-                    "Sel" to 0f,
-                    "Rab" to 0f,
-                    "Kam" to 0f,
-                    "Jum" to 0f,
-                    "Sab" to 0f,
-                    "Min" to 0f
-                )
+                val incomeMap = mutableMapOf<String, Float>()
+                val expenseMap = mutableMapOf<String, Float>()
 
-                val expenseMap = mutableMapOf(
-                    "Sen" to 0f,
-                    "Sel" to 0f,
-                    "Rab" to 0f,
-                    "Kam" to 0f,
-                    "Jum" to 0f,
-                    "Sab" to 0f,
-                    "Min" to 0f
-                )
+                val tempCalendar = Calendar.getInstance()
+                tempCalendar.timeInMillis = startMillis
 
+                while (tempCalendar.timeInMillis <= endMillis) {
+
+                    val dayName = getDayName(
+                        tempCalendar.timeInMillis
+                    )
+
+                    incomeMap[dayName] = 0f
+                    expenseMap[dayName] = 0f
+
+                    tempCalendar.add(
+                        Calendar.DAY_OF_MONTH,
+                        1
+                    )
+                }
                 var totalIncome = 0
                 var totalExpense = 0
 

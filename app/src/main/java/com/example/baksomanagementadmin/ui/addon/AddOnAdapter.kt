@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.baksomanagementadmin.R
@@ -20,11 +21,21 @@ class AddOnAdapter(
     private val TAG = "AddOnAdapter"
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val image: ImageView = itemView.findViewById(R.id.imgAddOn)
-        val name: TextView = itemView.findViewById(R.id.tvAddOnName)
-        val price: TextView = itemView.findViewById(R.id.tvAddOnHarga)
-        val btnEdit: ImageView = itemView.findViewById(R.id.btnEdit)
-        val btnDelete: ImageView = itemView.findViewById(R.id.btnDelete)
+
+        val image: ImageView =
+            itemView.findViewById(R.id.imgAddOn)
+
+        val name: TextView =
+            itemView.findViewById(R.id.tvAddOnName)
+
+        val price: TextView =
+            itemView.findViewById(R.id.tvAddOnHarga)
+
+        val btnEdit: ImageView =
+            itemView.findViewById(R.id.btnEdit)
+
+        val btnDelete: ImageView =
+            itemView.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,29 +55,28 @@ class AddOnAdapter(
         return size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+
         val addOn = addOnList[position]
 
-        Log.d(TAG, "onBindViewHolder position: $position, id: ${addOn.id}, nama: ${addOn.name}")
-
         holder.name.text = addOn.name
-        holder.price.text = "Rp. ${addOn.price}"
 
-        if (addOn.gambarUrl.isNullOrEmpty()) {
-            Log.w(TAG, "Image URL kosong untuk menu id: ${addOn.id}")
-        }
+        holder.price.text =
+            "Rp %,d".format(addOn.price)
+                .replace(',', '.')
 
         Glide.with(holder.itemView.context)
             .load(addOn.gambarUrl)
             .into(holder.image)
 
         holder.btnEdit.setOnClickListener {
-            Log.d(TAG, "Edit clicked: ${addOn.id}")
             onEditClick(addOn)
         }
 
         holder.btnDelete.setOnClickListener {
-            Log.d(TAG, "Delete clicked: ${addOn.id}")
             onDeleteClick(addOn)
         }
     }

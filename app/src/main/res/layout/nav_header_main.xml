@@ -10,7 +10,7 @@
     android:paddingBottom="24dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="@android:color/white">
+    android:background="@color/setting_card">
 
     <!-- Foto profil, ubah yang android:src agar menampilkan profile_picutre dari akun yang dilogin -->
     <ImageView
@@ -32,7 +32,7 @@
         android:text="@string/name"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="@color/setting_text"
         android:layout_marginBottom="12dp" />
 
     <View

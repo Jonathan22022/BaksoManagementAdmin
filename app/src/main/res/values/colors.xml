@@ -5,10 +5,35 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="gray">#FF808080</color>
     <color name="red">#FFD50000</color>
     <color name="nav_red">#D90004</color>
     <color name="nav_grey">#464948</color>
+    <color name="dark_red">#7A2F2F</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- colors.xml -->
+    <color name="status_available">#4CAF50</color>
+    <color name="status_unavailable">#F44336</color>
+
+    <!--background light-->
+    <color name="bg">#F5F5F5</color>
+    <color name="bg_end_firstpage">#F3EAEA</color>
+    <color name="bg_btnregister">#FFFFFF</color>
+    <color name="setting_card">#FFFFFF</color>
+    <color name="setting_text">#222222</color>
+    <color name="setting_stroke">#E5E5E5</color>
+    <color name="input_bg">#FFFFFF</color>
+    <color name="input_border">#D6D6D6</color>
+    <color name="primary_title">#7A2E2E</color>
+    <color name="text_secondary">#777777</color>
+    <color name="text_3">#666666</color>
+    <color name="text_4">#D50000</color>
+    <color name="drawer_bg">#FFFFFF</color>
+    <color name="drawer_text">#222222</color>
+    <color name="drawer_icon">#464948</color>
+    <color name="bottom_nav_bg">#FFFFFF</color>
+    <color name="bottom_nav_active">#D90004</color>
+    <color name="bottom_nav_inactive">#464948</color>
 </resources>

@@ -14,6 +14,11 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.AddOn
 import com.example.baksomanagementadmin.data.repository.AddOnRepository
 import java.io.File
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.baksomanagementadmin.data.model.BahanItem
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
+import com.example.baksomanagementadmin.ui.addon.BahanAddOnAdapter
 
 class EditAddOnFragment : Fragment() {
 
@@ -25,7 +30,10 @@ class EditAddOnFragment : Fragment() {
     private lateinit var layoutPlaceholder: LinearLayout
     private lateinit var btnPickImage: FrameLayout
     private lateinit var btnSubmit: Button
-
+    private lateinit var bahanRepository: BahanBakuRepository
+    private lateinit var bahanAdapter: BahanAddOnAdapter
+    private lateinit var rvBahan: RecyclerView
+    private var currentBahanList = emptyList<BahanItem>()
     private var imageUri: Uri? = null
     private var currentImageUrl: String = ""
     private var addOnId: String = ""
@@ -49,7 +57,9 @@ class EditAddOnFragment : Fragment() {
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
         btnPickImage = view.findViewById(R.id.btnPickImage)
         btnSubmit = view.findViewById(R.id.btnSubmit)
-
+        rvBahan = view.findViewById(R.id.rvBahan)
+        bahanRepository = BahanBakuRepository()
+        rvBahan.layoutManager = LinearLayoutManager(requireContext())
         btnSubmit.text = "Update Add On"
 
         loadData()
@@ -67,18 +77,25 @@ class EditAddOnFragment : Fragment() {
     private fun loadData() {
         repository.getAddOnList { list ->
             val data = list.find { it.id == addOnId }
-
             if (data != null) {
                 etNama.setText(data.name)
-                etHarga.setText(data.price.toString())
-
+                etHarga.setText(
+                    data.price.toString()
+                )
                 currentImageUrl = data.gambarUrl
-
+                currentBahanList = data.bahanList
                 Glide.with(requireContext())
                     .load(data.gambarUrl)
                     .into(imgPreview)
-
                 layoutPlaceholder.visibility = View.GONE
+                bahanRepository.getBahanBakuList { bahanList ->
+                    bahanAdapter =
+                        BahanAddOnAdapter(
+                            bahanList, currentBahanList
+                        )
+                    rvBahan.adapter =
+                        bahanAdapter
+                }
             }
         }
     }
@@ -117,7 +134,8 @@ class EditAddOnFragment : Fragment() {
             id = addOnId,
             name = nama,
             price = harga,
-            gambarUrl = imageUrl
+            gambarUrl = imageUrl,
+            bahanList = bahanAdapter.getSelectedBahan()
         )
 
         repository.updateAddOn(

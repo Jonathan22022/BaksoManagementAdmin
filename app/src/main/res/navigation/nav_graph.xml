@@ -123,19 +123,13 @@
 
     <fragment
         android:id="@+id/menu_history"
-        android:name="com.example.baksomanagementadmin.ui.HistoryFragment"
+        android:name="com.example.baksomanagementadmin.ui.HistoryOrderFragment"
         android:label="@string/menu_history"
-        tools:layout="@layout/fragment_history">
+        tools:layout="@layout/fragment_history_order">
     </fragment>
 
     <fragment
-        android:id="@+id/menu_favourite"
-        android:name="com.example.baksomanagementadmin.ui.FavouriteFragment"
-        android:label="@string/menu_favourite"
-        tools:layout="@layout/fragment_favourite"/>
-
-    <fragment
-        android:id="@+id/notificationFragment"
+        android:id="@+id/menu_notification"
         android:name="com.example.baksomanagementadmin.ui.NotificationFragment"
         android:label="@string/notificationFragment"
         tools:layout="@layout/fragment_notification">

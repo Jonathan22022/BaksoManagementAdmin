@@ -20,6 +20,9 @@ import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.AddOn
 import com.example.baksomanagementadmin.data.repository.AddOnRepository
 import java.io.File
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 
 class TambahAddOnFragment : Fragment() {
 
@@ -27,7 +30,8 @@ class TambahAddOnFragment : Fragment() {
     private lateinit var imgPreview: ImageView
     private lateinit var layoutPlaceholder: LinearLayout
     private lateinit var repository: AddOnRepository
-
+    private lateinit var bahanRepository: BahanBakuRepository
+    private lateinit var bahanAdapter: BahanAddOnAdapter
     private var imageUri: Uri? = null
 
     override fun onCreateView(
@@ -42,7 +46,19 @@ class TambahAddOnFragment : Fragment() {
         val etNama = view.findViewById<EditText>(R.id.etNamaAddOn)
         val etHarga = view.findViewById<EditText>(R.id.etHargaAddOn)
         val btnSubmit = view.findViewById<Button>(R.id.btnSubmit)
+        val rvBahan = view.findViewById<RecyclerView>(R.id.rvBahan)
 
+        bahanRepository = BahanBakuRepository()
+
+        rvBahan.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        bahanRepository.getBahanBakuList { list ->
+
+            bahanAdapter = BahanAddOnAdapter(list)
+
+            rvBahan.adapter = bahanAdapter
+        }
         btnPickImage = view.findViewById(R.id.btnPickImage)
         imgPreview = view.findViewById(R.id.imgPreview)
         layoutPlaceholder = view.findViewById(R.id.layoutPlaceholder)
@@ -79,7 +95,8 @@ class TambahAddOnFragment : Fragment() {
                     val data = AddOn(
                         name = nama,
                         price = harga,
-                        gambarUrl = url
+                        gambarUrl = url,
+                        bahanList = bahanAdapter.getSelectedBahan()
                     )
 
                     repository.addAddOn(

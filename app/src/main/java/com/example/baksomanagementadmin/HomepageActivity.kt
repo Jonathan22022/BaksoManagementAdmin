@@ -12,6 +12,7 @@ import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.example.baksomanagementadmin.data.repository.AuthRepository
 import com.example.baksomanagementadmin.data.repository.UserRepository
 import com.example.baksomanagementadmin.utils.SessionManager
+import com.example.baksomanagementadmin.utils.ThemeManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -30,6 +31,9 @@ class HomepageActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyTheme(
+            ThemeManager.getTheme(this)
+        )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homepage)
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
@@ -55,7 +59,7 @@ class HomepageActivity : AppCompatActivity() {
                 R.id.menu_bahanBaku -> controller.navigate(R.id.menu_bahanBaku)
                 R.id.menu_add_on -> controller.navigate(R.id.menu_add_on)
                 R.id.menu_weekly_insight -> controller.navigate(R.id.menu_weekly_insight)
-                R.id.menu_account -> controller.navigate(R.id.menu_account)
+                R.id.menu_notification -> controller.navigate(R.id.menu_notification)
             }
             true
         }
@@ -64,8 +68,8 @@ class HomepageActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.homepageFragment -> controller.navigate(R.id.homepageFragment)
+                R.id.menu_account -> controller.navigate(R.id.menu_account)
                 R.id.menu_history -> controller.navigate(R.id.menu_history)
-                R.id.menu_favourite -> controller.navigate(R.id.menu_favourite)
                 R.id.menu_about_us -> controller.navigate(R.id.menu_about_us)
                 R.id.menu_setting -> controller.navigate(R.id.menu_setting)
                 R.id.menu_logout -> {

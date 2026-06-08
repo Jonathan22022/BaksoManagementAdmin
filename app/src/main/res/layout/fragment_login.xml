@@ -12,7 +12,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow_back"
-        app:tint="#7A2E2E"
+        app:tint="@color/primary_title"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,82 +26,93 @@
         android:text="Login"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#7A2E2E"
+        android:textColor="@color/primary_title"
         app:layout_constraintTop_toTopOf="@id/btnBack"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Form Container -->
-    <LinearLayout
-        android:id="@+id/formContainer"
+    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="32dp"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginTop="40dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@color/setting_card"
+
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/etUsername"
+        <LinearLayout
+            android:id="@+id/formContainer"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Username"
-            android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"/>
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Email"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"/>
-
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"/>
-
-        <!-- Forgot Password -->
-        <TextView
-            android:id="@+id/tvForgotPassword"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forgot password"
-            android:textColor="#1E88E5"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="end"/>
+            android:orientation="vertical"
+            android:padding="24dp">
 
-        <!-- Login Button -->
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="Login"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/btn_send"/>
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="Username"
+                android:textColor="@color/setting_text"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="16dp"/>
 
-        <!-- Register Text -->
-        <TextView
-            android:id="@+id/tvRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Don’t Have Account? Register Here!"
-            android:textColor="#1E88E5"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center"/>
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="Email"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/setting_text"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="16dp"/>
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/setting_text"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="16dp"/>
 
+            <!-- Forgot Password -->
+            <TextView
+                android:id="@+id/tvForgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot password"
+                android:textColor="#1E88E5"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="end"/>
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="Login"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/btn_send"/>
+
+            <!-- Register Text -->
+            <TextView
+                android:id="@+id/tvRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don’t Have Account? Register Here!"
+                android:textColor="#1E88E5"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

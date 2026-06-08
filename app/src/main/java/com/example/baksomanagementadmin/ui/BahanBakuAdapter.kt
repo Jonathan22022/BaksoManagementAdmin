@@ -20,6 +20,8 @@ class BahanBakuAdapter(
         val img: ImageView = view.findViewById(R.id.imgBahanBaku)
         val nama: TextView = view.findViewById(R.id.tvBahanBakuName)
         val harga: TextView = view.findViewById(R.id.tvBahanBakuHarga)
+        val berat: TextView = view.findViewById(R.id.tvBahanBakuBerat)
+        val satuan: TextView = view.findViewById(R.id.tvBahanBakuSatuan)
         val btnEdit: ImageView = view.findViewById(R.id.btnEdit)
         val btnDelete: ImageView = view.findViewById(R.id.btnDelete)
     }
@@ -36,7 +38,16 @@ class BahanBakuAdapter(
         val item = list[position]
 
         holder.nama.text = item.nama
-        holder.harga.text = "Rp ${item.harga}"
+
+        holder.harga.text =
+            "Rp %,d".format(item.harga)
+                .replace(',', '.')
+
+        holder.berat.text =
+            item.berat.toString()
+
+        holder.satuan.text =
+            item.satuan
 
         Glide.with(holder.itemView.context)
             .load(item.gambarUrl)

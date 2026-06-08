@@ -48,7 +48,7 @@ object NotificationHelper {
     fun showNewOrderNotification(context: Context) {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.baksoku_foreground)
             .setContentTitle("Bakso Admin")
             .setContentText("Ada orderan baru masuk")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
