@@ -16,34 +16,65 @@ import java.util.Date
 import java.util.Locale
 
 class NotificationAdapter(
-    private val list: List<AdminOrderItem>,
-    private val onClick: (AdminOrderItem) -> Unit
-) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+    private var list: List<AdminOrderItem>,
+    private val onClick:(AdminOrderItem)->Unit
+)
+    : RecyclerView.Adapter<
+        NotificationAdapter.ViewHolder>() {
 
-    companion object {
-        private const val TAG = "NotificationAdapter"
-    }
+    class ViewHolder(
+        itemView: View
+    ) : RecyclerView.ViewHolder(itemView){
 
-    init {
-        Log.d(TAG, "Adapter initialized")
-        Log.d(TAG, "Total items received = ${list.size}")
-    }
+        val img =
+            itemView.findViewById<ImageView>(
+                R.id.imgMenu
+            )
 
-    inner class ViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
+        val tvId =
+            itemView.findViewById<TextView>(
+                R.id.tvId
+            )
 
-        val tvId: TextView = view.findViewById(R.id.tvId)
-        val imgMenu: ImageView = view.findViewById(R.id.imgMenu)
-        val tvNama: TextView = view.findViewById(R.id.tvNama)
-        val tvDate: TextView = view.findViewById(R.id.tvDate)
-        val tvAddon: TextView = view.findViewById(R.id.tvAddon)
-        val tvQty: TextView = view.findViewById(R.id.tvQty)
-        val tvTotal: TextView = view.findViewById(R.id.tvTotal)
-        val btnDetail: Button = view.findViewById(R.id.btnOrderDetail)
+        val tvNama =
+            itemView.findViewById<TextView>(
+                R.id.tvNama
+            )
 
-        init {
-            Log.d(TAG, "ViewHolder created")
-        }
+        val tvNamaUser =
+            itemView.findViewById<TextView>(
+                R.id.tvNamaUser
+            )
+
+        val tvDate =
+            itemView.findViewById<TextView>(
+                R.id.tvDate
+            )
+
+        val tvAddon =
+            itemView.findViewById<TextView>(
+                R.id.tvAddon
+            )
+
+        val tvQty =
+            itemView.findViewById<TextView>(
+                R.id.tvQty
+            )
+
+        val tvTotal =
+            itemView.findViewById<TextView>(
+                R.id.tvTotal
+            )
+
+        val tvOther =
+            itemView.findViewById<TextView>(
+                R.id.tvOther
+            )
+
+        val btnDetail =
+            itemView.findViewById<Button>(
+                R.id.btnOrderDetail
+            )
     }
 
     override fun onCreateViewHolder(
@@ -51,25 +82,18 @@ class NotificationAdapter(
         viewType: Int
     ): ViewHolder {
 
-        Log.d(TAG, "onCreateViewHolder() called")
-
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(
-                R.layout.item_order_notification,
-                parent,
-                false
-            )
-
-        return ViewHolder(view)
+        return ViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(
+                    R.layout.item_order_notification,
+                    parent,
+                    false
+                )
+        )
     }
 
-    override fun getItemCount(): Int {
-
-        Log.d(TAG, "getItemCount() = ${list.size}")
-
-        return list.size
-    }
+    override fun getItemCount() =
+        list.size
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -78,139 +102,64 @@ class NotificationAdapter(
 
         val item = list[position]
 
-        Log.d(
-            TAG,
-            """
-            ========= BIND ITEM =========
-            Position    : $position
-            Order ID    : ${item.orderId}
-            User ID     : ${item.userID}
-            Nama Menu   : ${item.nama}
-            Quantity    : ${item.quantity}
-            Total       : ${item.total}
-            Status      : ${item.status}
-            Created At  : ${item.createdAt}
-            Image URL   : ${item.imageUrl}
-            Addons Size : ${item.addons.size}
-            ============================
-            """.trimIndent()
-        )
+        holder.tvId.text =
+            item.orderId.take(8)
 
-        holder.tvId.text = item.userID
-        holder.tvNama.text = item.nama
+        holder.tvNama.text =
+            item.nama
 
-        val sdf = SimpleDateFormat(
-            "EEEE, dd MMMM yyyy, HH:mm",
-            Locale("id", "ID")
-        )
-
-        holder.tvDate.text =
-            sdf.format(Date(item.createdAt))
+        holder.tvNamaUser.text =
+            item.namaUser
 
         holder.tvQty.text =
-            "Jumlah: ${item.quantity}"
+            "Jumlah : ${item.quantity}"
 
         holder.tvTotal.text =
             "Rp ${item.total}"
 
-        val addonText =
-            if (item.addons.isEmpty()) {
-                "No add-on"
-            } else {
-                item.addons.joinToString(", ") {
-                    it.name
-                }
+        holder.tvAddon.text =
+            item.addons.joinToString {
+                it.name
             }
 
-        holder.tvAddon.text = addonText
-
-        Log.d(
-            TAG,
-            "Addon Text = $addonText"
-        )
-
-        if (item.imageUrl.isBlank()) {
-
-            Log.w(
-                TAG,
-                "Image URL kosong untuk orderId=${item.orderId}"
+        val date =
+            SimpleDateFormat(
+                "dd MMM yyyy HH:mm",
+                Locale("id")
             )
+                .format(
+                    Date(item.createdAt)
+                )
 
-        } else {
+        holder.tvDate.text = date
 
-            Log.d(
-                TAG,
-                "Loading image from: ${item.imageUrl}"
-            )
+        if(item.itemCount > 1){
+
+            holder.tvOther.visibility =
+                View.VISIBLE
+
+            holder.tvOther.text =
+                "dan ${item.itemCount - 1} menu lainnya"
+        }else{
+
+            holder.tvOther.visibility =
+                View.GONE
         }
 
-        Glide.with(holder.imgMenu.context)
+        Glide.with(holder.itemView)
             .load(item.imageUrl)
-            .placeholder(R.drawable.ic_launcher_background)
-            .error(R.drawable.ic_launcher_background)
-            .into(holder.imgMenu)
+            .into(holder.img)
 
         holder.btnDetail.setOnClickListener {
 
-            Log.d(
-                TAG,
-                """
-                DETAIL BUTTON CLICKED
-                Order ID : ${item.orderId}
-                User ID  : ${item.userID}
-                Nama     : ${item.nama}
-                """.trimIndent()
-            )
-
             onClick(item)
         }
-
-        holder.itemView.setOnClickListener {
-
-            Log.d(
-                TAG,
-                """
-                ITEM CLICKED
-                Position : $position
-                Order ID : ${item.orderId}
-                """.trimIndent()
-            )
-        }
     }
 
-    override fun onViewRecycled(
-        holder: ViewHolder
+    fun submitList(
+        newList: List<AdminOrderItem>
     ) {
-
-        super.onViewRecycled(holder)
-
-        Log.d(
-            TAG,
-            "View recycled at adapterPosition=${holder.adapterPosition}"
-        )
-    }
-
-    override fun onAttachedToRecyclerView(
-        recyclerView: RecyclerView
-    ) {
-
-        super.onAttachedToRecyclerView(recyclerView)
-
-        Log.d(
-            TAG,
-            "Adapter attached to RecyclerView"
-        )
-    }
-
-    override fun onDetachedFromRecyclerView(
-        recyclerView: RecyclerView
-    ) {
-
-        super.onDetachedFromRecyclerView(recyclerView)
-
-        Log.d(
-            TAG,
-            "Adapter detached from RecyclerView"
-        )
+        list = newList
+        notifyDataSetChanged()
     }
 }

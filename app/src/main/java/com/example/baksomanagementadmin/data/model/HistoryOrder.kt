@@ -5,9 +5,10 @@ data class HistoryOrder(
     val userID: String = "",
     val nama: String = "",
     val imageUrl: String = "",
-    val createdAt: Long = 0L,
+    val createdAt: Long = System.currentTimeMillis(),
     val status: String = "",
     val addons: List<AddOn> = emptyList(),
     val quantity: Int = 0,
-    val total: Int = 0
+    val total: Int = 0,
+    var selected: Boolean = false
 )

@@ -17,6 +17,7 @@
             android:hint="Nama Add On"
             android:layout_width="match_parent"
             android:layout_height="55dp"
+            android:textColor="@color/setting_text"
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"/>
 
@@ -27,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="16dp"
+            android:textColor="@color/setting_text"
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"/>
 
@@ -61,6 +63,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:tint="@color/placeholder_icon"
                     android:src="@android:drawable/ic_menu_gallery"/>
 
                 <TextView
@@ -68,6 +71,7 @@
                     android:layout_marginTop="8dp"
                     android:textSize="14sp"
                     android:layout_height="25dp"
+                    android:tint="@color/placeholder_icon"
                     android:layout_width="wrap_content"/>
             </LinearLayout>
 

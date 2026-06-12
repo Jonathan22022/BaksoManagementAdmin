@@ -1,6 +1,9 @@
 package com.example.baksomanagementadmin.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.app.DatePickerDialog
+import java.util.Calendar
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -18,10 +21,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HistoryOrderFragment : Fragment() {
 
     private lateinit var rv: RecyclerView
+    private lateinit var fabDelete: FloatingActionButton
+
+    private lateinit var adapter: HistoryOrderAdapter
 
     private lateinit var etSearch: EditText
 
@@ -54,6 +62,7 @@ class HistoryOrderFragment : Fragment() {
         btnSelesai = view.findViewById(R.id.btnSelesai)
 
         btnCancel = view.findViewById(R.id.btnCancel)
+        fabDelete = view.findViewById(R.id.fabDelete)
 
         rv.layoutManager =
             LinearLayoutManager(requireContext())
@@ -72,37 +81,131 @@ class HistoryOrderFragment : Fragment() {
             filterData()
         }
 
-        etSearch.addTextChangedListener(object : TextWatcher {
+        etSearch.setOnClickListener {
+            showDatePicker()
+        }
 
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {}
+        etSearch.setOnLongClickListener {
 
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-                filterData()
-            }
+            etSearch.setText("")
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            filterData()
+
+            true
+        }
+
+        fabDelete.setOnClickListener {
+
+            AlertDialog.Builder(
+                requireContext()
+            )
+                .setTitle("Hapus Riwayat")
+                .setMessage(
+                    "Hapus riwayat terpilih?"
+                )
+                .setPositiveButton("Ya"){_,_->
+
+                    val selectedOrders =
+                        fullList.filter {
+                            it.selected
+                        }
+
+                    selectedOrders.forEach { order ->
+                        fullList.removeAll {
+                            it.orderId == order.orderId
+                        }
+                    }
+
+                    filterData()
+
+                    fabDelete.visibility = View.GONE
+                }
+                .setNegativeButton(
+                    "Tidak",
+                    null
+                )
+                .show()
+        }
 
         return view
     }
 
+    private fun showDatePicker() {
+
+        val calendar = Calendar.getInstance()
+
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+
+                val selectedCalendar = Calendar.getInstance()
+
+                selectedCalendar.set(
+                    year,
+                    month,
+                    day,
+                    0,
+                    0,
+                    0
+                )
+
+                selectedCalendar.set(
+                    Calendar.MILLISECOND,
+                    0
+                )
+
+                val formatter = SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                )
+
+                etSearch.setText(
+                    formatter.format(selectedCalendar.time)
+                )
+
+                filterData()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
     private fun loadData() {
 
-        repository.getHistoryOrders { list ->
+        repository.getHistoryOrders {
 
             fullList.clear()
 
-            fullList.addAll(list)
+            fullList.addAll(it)
+
+            adapter =
+                HistoryOrderAdapter(
+                    fullList,
+                    { showFab ->
+
+                        fabDelete.visibility =
+                            if(showFab)
+                                View.VISIBLE
+                            else
+                                View.GONE
+                    },
+                    { order ->
+
+                        val bundle =
+                            Bundle().apply {
+
+                                putString(
+                                    "ORDER_ID",
+                                    order.orderId
+                                )
+                            }
+
+                        findNavController().navigate(R.id.action_historyOrderFragment_to_detailHistoryOrderan, bundle)
+                    }
+                )
+
+            rv.adapter = adapter
 
             filterData()
         }
@@ -110,24 +213,65 @@ class HistoryOrderFragment : Fragment() {
 
     private fun filterData() {
 
-        val keyword =
-            etSearch.text.toString().lowercase()
+        val selectedDate =
+            etSearch.text.toString().trim()
 
         val sdf = SimpleDateFormat(
             "dd/MM/yyyy",
             Locale.getDefault()
         )
 
-        val filtered = fullList.filter {
+        val filtered =
+            fullList.filter {
 
-            val date =
-                sdf.format(Date(it.createdAt))
+                val date =
+                    sdf.format(
+                        Date(it.createdAt)
+                    )
 
-            it.status == currentStatus &&
-                    date.contains(keyword)
-        }
+                it.status == currentStatus &&
+                        (
+                                selectedDate.isEmpty()
+                                        || date == selectedDate
+                                )
+            }.toMutableList()
 
-        rv.adapter = HistoryOrderAdapter(filtered)
+        adapter =
+            HistoryOrderAdapter(
+                filtered,
+
+                { showFab ->
+
+                    fabDelete.visibility =
+                        if (showFab)
+                            View.VISIBLE
+                        else
+                            View.GONE
+                },
+
+                { order ->
+
+                    val bundle =
+                        Bundle().apply {
+
+                            putString(
+                                "ORDER_ID",
+                                order.orderId
+                            )
+                        }
+
+                    findNavController().navigate(
+                        R.id.action_historyOrderFragment_to_detailHistoryOrderan,
+                        bundle
+                    )
+                }
+            )
+
+        rv.adapter = adapter
+
+        adapter.updateData(
+            filtered.toMutableList()
+        )
     }
 
     private fun switchTab(isSelesai: Boolean) {

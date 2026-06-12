@@ -26,4 +26,5 @@ data class Order(
     val createdAt: Long = System.currentTimeMillis(),
     val total: Int = 0, //total harga pesanan
     val status: String = "pending",
+    val completed:Boolean = false
 )

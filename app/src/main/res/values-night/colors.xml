@@ -19,4 +19,8 @@
     <color name="bottom_nav_bg">#1E1E1E</color>
     <color name="bottom_nav_active">#FF5252</color>
     <color name="bottom_nav_inactive">#AAAAAA</color>
+    <color name="placeholder_icon">#CCCCCC</color>
+    <color name="placeholder_text">#CCCCCC</color>
+    <color name="placeholder_border">#444444</color>
+    <color name="placeholder_bg">#2A2A2A</color>
 </resources>

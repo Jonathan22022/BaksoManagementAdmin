@@ -36,4 +36,8 @@
     <color name="bottom_nav_bg">#FFFFFF</color>
     <color name="bottom_nav_active">#D90004</color>
     <color name="bottom_nav_inactive">#464948</color>
+    <color name="placeholder_icon">#666666</color>
+    <color name="placeholder_text">#666666</color>
+    <color name="placeholder_border">#D6D6D6</color>
+    <color name="placeholder_bg">#FFFFFF</color>
 </resources>

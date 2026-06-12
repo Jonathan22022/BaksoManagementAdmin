@@ -3,6 +3,8 @@ package com.example.baksomanagementadmin.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +16,9 @@ import java.util.Date
 import java.util.Locale
 
 class HistoryOrderAdapter(
-    private val list: List<HistoryOrder>
+    private val list: MutableList<HistoryOrder>,
+    private val onCheckedChanged:(Boolean)->Unit,
+    private val onDetailClick:(HistoryOrder)->Unit
 ) : RecyclerView.Adapter<HistoryOrderAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -36,6 +40,16 @@ class HistoryOrderAdapter(
 
         val tvTotal: TextView =
             view.findViewById(R.id.tvTotal)
+
+        val cbSelect =
+            view.findViewById<CheckBox>(
+                R.id.cbSelect
+            )
+
+        val btnDetail =
+            view.findViewById<Button>(
+                R.id.btnDetail
+            )
     }
 
     override fun onCreateViewHolder(
@@ -96,5 +110,34 @@ class HistoryOrderAdapter(
             .placeholder(R.drawable.bakso)
             .error(R.drawable.bakso)
             .into(holder.imgMenu)
+
+        holder.cbSelect.setOnCheckedChangeListener(
+            null
+        )
+
+        holder.cbSelect.isChecked =
+            item.selected
+
+        holder.cbSelect.setOnCheckedChangeListener { _, checked ->
+
+            item.selected = checked
+
+            onCheckedChanged(
+                list.any { it.selected }
+            )
+        }
+
+        holder.btnDetail.setOnClickListener {
+
+            onDetailClick(item)
+        }
+    }
+
+    fun updateData(
+        newList: MutableList<HistoryOrder>
+    ) {
+        list.clear()
+        list.addAll(newList)
+        notifyDataSetChanged()
     }
 }

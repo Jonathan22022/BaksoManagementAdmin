@@ -1,6 +1,7 @@
 package com.example.baksomanagementadmin.data.repository
 
 import com.example.baksomanagementadmin.data.model.HistoryOrder
+import com.example.baksomanagementadmin.data.model.OrderItem
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HistoryOrderRepository {
@@ -70,6 +71,59 @@ class HistoryOrderRepository {
                             }
                         }
                 }
+            }
+    }
+
+    fun getHistoryOrderItems(
+        orderId: String,
+        onResult: (List<OrderItem>) -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val items = result.documents.mapNotNull {
+
+                    it.toObject(OrderItem::class.java)
+                        ?.copy(id = it.id)
+                }
+
+                onResult(items)
+            }
+    }
+
+    fun deleteHistoryOrder(
+        orderId: String,
+        onSuccess: () -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { items ->
+
+                val batch = firestore.batch()
+
+                items.documents.forEach {
+
+                    batch.delete(it.reference)
+                }
+
+                batch.commit()
+                    .addOnSuccessListener {
+
+                        firestore.collection("orders")
+                            .document(orderId)
+                            .delete()
+                            .addOnSuccessListener {
+
+                                onSuccess()
+                            }
+                    }
             }
     }
 }

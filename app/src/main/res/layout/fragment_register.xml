@@ -104,16 +104,6 @@
             android:background="@drawable/bg_edittext"
             android:paddingHorizontal="16dp"/>
 
-        <EditText
-            android:id="@+id/etNimNik"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:hint="NIM / NIK"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/setting_text"
-            android:background="@drawable/bg_edittext"
-            android:paddingHorizontal="16dp"/>
-
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"

@@ -28,26 +28,13 @@ import java.util.Locale
 
 class NotificationFragment : Fragment() {
 
-    companion object {
-        private const val TAG = "NotificationFragment"
-    }
-
-    private var listener: ListenerRegistration? = null
-    private var orderListener: ListenerRegistration? = null
-
-    private var firstLoad = true
-
     private lateinit var rv: RecyclerView
     private lateinit var etDate: EditText
-
-    private val orderRepository = OrderRepository()
-
-    private var fullList = mutableListOf<AdminOrderItem>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate()")
-    }
+    private lateinit var adapter: NotificationAdapter
+    private var selectedDateMillis: Long? = null
+    private var allOrders: List<AdminOrderItem> = emptyList()
+    private val repository =
+        OrderRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,61 +42,61 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        Log.d(TAG, "onCreateView()")
-
-        val view = inflater.inflate(
+        return inflater.inflate(
             R.layout.fragment_notification,
             container,
             false
         )
-
-        rv = view.findViewById(R.id.rvNotification)
-        etDate = view.findViewById(R.id.etDate)
-
-        rv.layoutManager =
-            LinearLayoutManager(requireContext())
-
-        Log.d(TAG, "RecyclerView initialized")
-
-        loadOrdersRealtime()
-
-        return view
     }
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
     ) {
-        super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "onViewCreated()")
+        rv = view.findViewById(R.id.rvNotification)
 
-        requestNotificationPermission()
+        rv.layoutManager =
+            LinearLayoutManager(requireContext())
 
-        listenNewOrders()
+        adapter =
+            NotificationAdapter(emptyList()) { selectedOrder ->
+
+                val bundle = Bundle().apply {
+                    putString(
+                        "ORDER_ID",
+                        selectedOrder.orderId
+                    )
+                }
+
+                findNavController().navigate(
+                    R.id.action_notificationFragment_to_detailOrderanFragment,
+                    bundle
+                )
+            }
+
+        rv.adapter = adapter
+
+        etDate =
+            view.findViewById(R.id.etDate)
 
         etDate.setOnClickListener {
-
-            Log.d(TAG, "Date field clicked")
-
-            showDatePickerDialog()
+            showDatePicker(etDate)
         }
+
+        loadOrders()
     }
 
-    private fun showDatePickerDialog() {
+    private fun showDatePicker(
+        etDate: EditText
+    ) {
 
-        Log.d(TAG, "Opening DatePickerDialog")
+        val calendar =
+            Calendar.getInstance()
 
-        val calendar = Calendar.getInstance()
-
-        val dialog = DatePickerDialog(
+        DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
-
-                Log.d(
-                    TAG,
-                    "Date selected = $day/${month + 1}/$year"
-                )
 
                 val selectedCalendar =
                     Calendar.getInstance()
@@ -117,306 +104,72 @@ class NotificationFragment : Fragment() {
                 selectedCalendar.set(
                     year,
                     month,
-                    day
+                    day,
+                    0,
+                    0,
+                    0
                 )
 
-                val dateFormat =
+                selectedCalendar.set(
+                    Calendar.MILLISECOND,
+                    0
+                )
+
+                val startOfDay =
+                    selectedCalendar.timeInMillis
+
+                selectedCalendar.add(
+                    Calendar.DAY_OF_MONTH,
+                    1
+                )
+
+                val endOfDay =
+                    selectedCalendar.timeInMillis
+
+                val formatter =
                     SimpleDateFormat(
                         "dd/MM/yyyy",
                         Locale.getDefault()
                     )
 
-                val selectedDateText =
-                    dateFormat.format(
-                        selectedCalendar.time
+                etDate.setText(
+                    formatter.format(
+                        Date(startOfDay)
                     )
-
-                etDate.setText(selectedDateText)
-
-                filterOrdersByDate(
-                    selectedCalendar.timeInMillis
                 )
+
+                filterByDate(
+                    startOfDay,
+                    endOfDay
+                )
+
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        dialog.show()
+        ).show()
     }
-
-    private fun filterOrdersByDate(
-        selectedDateMillis: Long
+    private fun filterByDate(
+        startOfDay: Long,
+        endOfDay: Long
     ) {
 
-        val sdf = SimpleDateFormat(
-            "dd/MM/yyyy",
-            Locale.getDefault()
-        )
+        val filtered =
+            allOrders.filter {
 
-        val selectedDate =
-            sdf.format(Date(selectedDateMillis))
+                it.createdAt >= startOfDay &&
+                        it.createdAt < endOfDay
+            }
 
-        Log.d(
-            TAG,
-            "Filtering orders for date: $selectedDate"
-        )
+        adapter.submitList(filtered)
+    }
+    private fun loadOrders() {
 
-        val filteredList = fullList.filter {
+        repository.getAllOrderItems { orders ->
 
-            val itemDate =
-                sdf.format(Date(it.createdAt))
+            allOrders = orders
 
-            itemDate == selectedDate
+            adapter.submitList(orders)
         }
-
-        Log.d(
-            TAG,
-            "Filter result: ${filteredList.size} orders found"
-        )
-
-        setupAdapter(filteredList)
-    }
-
-    private fun loadOrdersRealtime() {
-
-        Log.d(TAG, "Starting realtime order listener")
-
-        orderListener?.remove()
-
-        orderListener = FirebaseClient.firestore
-            .collection("orders")
-            .addSnapshotListener { snapshot, error ->
-
-                if (error != null) {
-
-                    Log.e(
-                        TAG,
-                        "Firestore listener error",
-                        error
-                    )
-
-                    return@addSnapshotListener
-                }
-
-                Log.d(
-                    TAG,
-                    "Orders collection changed. Documents = ${snapshot?.size()}"
-                )
-
-                orderRepository.getAllOrderItems { list ->
-
-                    Log.d(
-                        TAG,
-                        "Repository returned ${list.size} orders"
-                    )
-
-                    list.forEachIndexed { index, item ->
-
-                        Log.d(
-                            TAG,
-                            """
-                            Order[$index]
-                            orderId=${item.orderId}
-                            status=${item.status}
-                            createdAt=${item.createdAt}
-                            """.trimIndent()
-                        )
-                    }
-
-                    val activeOrders =
-                        list.filter {
-
-                            it.status == "pending" ||
-                                    it.status == "diproses"
-                        }
-
-                    Log.d(
-                        TAG,
-                        "Active orders count = ${activeOrders.size}"
-                    )
-
-                    fullList.clear()
-                    fullList.addAll(activeOrders)
-
-                    setupAdapter(activeOrders)
-                }
-            }
-    }
-
-    private fun setupAdapter(
-        list: List<AdminOrderItem>
-    ) {
-
-        Log.d(
-            TAG,
-            "Setting adapter with ${list.size} items"
-        )
-
-        rv.adapter = NotificationAdapter(list) { selected ->
-
-            Log.d(
-                TAG,
-                """
-                Notification clicked
-                orderId=${selected.orderId}
-                status=${selected.status}
-                """.trimIndent()
-            )
-
-            val bundle = Bundle().apply {
-
-                putString(
-                    "ORDER_ID",
-                    selected.orderId
-                )
-            }
-
-            findNavController().navigate(
-                R.id.action_notificationFragment_to_detailOrderanFragment,
-                bundle
-            )
-        }
-    }
-
-    private fun requestNotificationPermission() {
-
-        Log.d(TAG, "Checking notification permission")
-
-        if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.TIRAMISU
-        ) {
-
-            if (
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-
-                Log.d(
-                    TAG,
-                    "Notification permission NOT granted"
-                )
-
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ),
-                    100
-                )
-
-            } else {
-
-                Log.d(
-                    TAG,
-                    "Notification permission already granted"
-                )
-            }
-        }
-    }
-
-    private fun listenNewOrders() {
-
-        Log.d(TAG, "Starting new order notification listener")
-
-        listener?.remove()
-
-        listener = FirebaseClient.firestore
-            .collection("orders")
-            .addSnapshotListener { value, error ->
-
-                if (error != null) {
-
-                    Log.e(
-                        TAG,
-                        "Notification listener error",
-                        error
-                    )
-
-                    return@addSnapshotListener
-                }
-
-                Log.d(
-                    TAG,
-                    "Order change detected"
-                )
-
-                value?.documentChanges?.forEach { change ->
-
-                    Log.d(
-                        TAG,
-                        """
-                        Change Type = ${change.type}
-                        Order ID = ${change.document.id}
-                        """.trimIndent()
-                    )
-
-                    if (
-                        change.type.name == "ADDED" &&
-                        !firstLoad
-                    ) {
-
-                        Log.d(
-                            TAG,
-                            "NEW ORDER DETECTED -> SHOW NOTIFICATION"
-                        )
-
-                        NotificationHelper
-                            .showNewOrderNotification(
-                                requireContext()
-                            )
-                    }
-                }
-
-                firstLoad = false
-
-                Log.d(
-                    TAG,
-                    "First load completed"
-                )
-            }
-    }
-
-    override fun onDestroyView() {
-
-        Log.d(TAG, "onDestroyView()")
-
-        listener?.remove()
-        orderListener?.remove()
-
-        Log.d(
-            TAG,
-            "Firestore listeners removed"
-        )
-
-        super.onDestroyView()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart()")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume()")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause()")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop()")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy()")
     }
 }

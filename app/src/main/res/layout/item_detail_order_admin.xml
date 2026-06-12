@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--item_detail_order_admin.xml-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,44 +13,68 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/bakso"/>
+        android:src="@drawable/bakso" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp">
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Bakso"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/setting_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textColor="@color/setting_text" />
 
         <TextView
             android:id="@+id/tvDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Catatan"
             android:textColor="@color/text_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_marginTop="2dp" />
 
         <TextView
             android:id="@+id/tvAddon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Addon"
             android:textColor="@color/text_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_marginTop="2dp" />
 
         <TextView
             android:id="@+id/tvQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Jumlah"
             android:textColor="@color/text_3"
+            android:layout_marginTop="2dp" />
+
+        <!-- HARGA SATUAN -->
+        <TextView
+            android:id="@+id/tvHarga"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Harga : Rp 15.000"
+            android:textColor="@color/text_3"
+            android:textStyle="bold"
+            android:layout_marginTop="2dp" />
+
+        <!-- SUBTOTAL -->
+        <TextView
+            android:id="@+id/tvSubtotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subtotal : Rp 46.000"
+            android:textColor="@color/red"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="4dp" />
 
     </LinearLayout>
 

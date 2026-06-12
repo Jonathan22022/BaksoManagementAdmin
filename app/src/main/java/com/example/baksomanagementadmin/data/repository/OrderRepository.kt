@@ -4,17 +4,26 @@ import com.example.baksomanagementadmin.data.model.AdminOrderItem
 import com.example.baksomanagementadmin.data.model.Order
 import com.example.baksomanagementadmin.data.model.AddOn
 import com.example.baksomanagementadmin.data.model.OrderItem
+import com.example.baksomanagementadmin.data.model.User
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 
 class OrderRepository {
 
     private val firestore = FirebaseClient.firestore
 
-    fun getOrderById(id: String, onResult: (Order?) -> Unit) {
-        firestore.collection("order").document(id)
+    fun getOrderById(
+        id: String,
+        onResult: (Order?) -> Unit
+    ) {
+        firestore.collection("orders")
+            .document(id)
             .get()
             .addOnSuccessListener {
-                val order = it.toObject(Order::class.java)?.copy(id = it.id)
+
+                val order =
+                    it.toObject(Order::class.java)
+                        ?.copy(id = it.id)
+
                 onResult(order)
             }
     }
@@ -47,7 +56,8 @@ class OrderRepository {
                         "harga" to item.harga,
                         "quantity" to item.quantity,
                         "catatan" to item.catatan,
-                        "addons" to item.addons
+                        "addons" to item.addons,
+                        "imageUrl" to item.imageUrl
                     )
 
                     batch.set(itemRef, itemData)
@@ -62,26 +72,51 @@ class OrderRepository {
     fun getAllOrderItems(
         onResult: (List<AdminOrderItem>) -> Unit
     ) {
+
         firestore.collection("orders")
-            .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .orderBy(
+                "createdAt",
+                com.google.firebase.firestore.Query.Direction.ASCENDING
+            )
             .get()
             .addOnSuccessListener { result ->
 
-                val finalList = mutableListOf<AdminOrderItem>()
-                val totalOrders = result.documents.size
+                val finalList =
+                    mutableListOf<AdminOrderItem>()
 
-                if (totalOrders == 0) {
+                val docs =
+                    result.documents.filter {
+
+                        val status =
+                            it.getString("status")
+                                ?: "pending"
+
+                        status != "selesai" &&
+                                status != "cancel"
+                    }
+
+                if (docs.isEmpty()) {
                     onResult(emptyList())
                     return@addOnSuccessListener
                 }
 
-                var processedOrders = 0
+                var processed = 0
 
-                result.documents.forEach { doc ->
+                docs.forEach { doc ->
 
                     val orderId = doc.id
-                    val userID = doc.getString("userID") ?: ""
-                    val createdAt = doc.getLong("createdAt") ?: 0L
+
+                    val userID =
+                        doc.getString("userID")
+                            ?: ""
+
+                    val createdAt =
+                        doc.getLong("createdAt")
+                            ?: 0L
+
+                    val status =
+                        doc.getString("status")
+                            ?: "pending"
 
                     firestore.collection("orders")
                         .document(orderId)
@@ -89,40 +124,170 @@ class OrderRepository {
                         .get()
                         .addOnSuccessListener { items ->
 
-                            items.documents.forEach { itemDoc ->
+                            val itemCount =
+                                items.size()
 
-                                val nama = itemDoc.getString("nama") ?: ""
-                                val qty = itemDoc.getLong("quantity")?.toInt() ?: 0
-                                val harga = itemDoc.getLong("harga")?.toInt() ?: 0
+                            val firstItem =
+                                items.documents.firstOrNull()
 
-                                val addons = itemDoc.get("addons") as? List<Map<String, Any>> ?: emptyList()
+                            if (firstItem != null) {
 
-                                val addonList = addons.map {
-                                    AddOn(
-                                        id = it["id"].toString(),
-                                        name = it["name"].toString(),
-                                        price = (it["price"] as Long).toInt()
-                                    )
-                                }
-                                val total = (harga + addonList.sumOf { it.price }) * qty
+                                val nama =
+                                    firstItem.getString("nama")
+                                        ?: ""
+
+                                val imageUrl =
+                                    firstItem.getString("imageUrl")
+                                        ?: ""
+
+                                val qty =
+                                    firstItem.getLong("quantity")
+                                        ?.toInt()
+                                        ?: 0
+
+                                val harga =
+                                    firstItem.getLong("harga")
+                                        ?.toInt()
+                                        ?: 0
+
+                                val addonsRaw =
+                                    firstItem.get("addons")
+                                            as? List<Map<String, Any>>
+                                        ?: emptyList()
+
+                                val addonList =
+                                    addonsRaw.map {
+
+                                        AddOn(
+                                            id = it["id"].toString(),
+                                            name = it["name"].toString(),
+                                            price = (
+                                                    it["price"] as Long
+                                                    ).toInt()
+                                        )
+                                    }
+
+                                val total =
+                                    (
+                                            harga +
+                                                    addonList.sumOf {
+                                                        it.price
+                                                    }
+                                            ) * qty
+
                                 finalList.add(
                                     AdminOrderItem(
                                         orderId = orderId,
                                         userID = userID,
                                         createdAt = createdAt,
                                         nama = nama,
+                                        imageUrl = imageUrl,
                                         addons = addonList,
                                         quantity = qty,
-                                        total = total
+                                        total = total,
+                                        status = status,
+                                        itemCount = itemCount
                                     )
                                 )
                             }
-                            processedOrders++
-                            if (processedOrders == totalOrders) {
-                                onResult(finalList)
+
+                            processed++
+
+                            if (processed == docs.size) {
+
+                                onResult(
+                                    finalList.sortedByDescending {
+                                        it.createdAt
+                                    }
+                                )
                             }
                         }
                 }
+            }
+    }
+
+    fun getOrderDetail(
+        orderId: String,
+        onResult: (
+            Order?,
+            List<OrderItem>
+        ) -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .get()
+            .addOnSuccessListener { orderDoc ->
+
+                val order =
+                    orderDoc.toObject(Order::class.java)
+                        ?.copy(id = orderDoc.id)
+
+                firestore.collection("orders")
+                    .document(orderId)
+                    .collection("items")
+                    .get()
+                    .addOnSuccessListener { itemDocs ->
+
+                        val items =
+                            itemDocs.toObjects(
+                                OrderItem::class.java
+                            )
+
+                        onResult(order, items)
+                    }
+            }
+    }
+
+    fun updateOrderStatus(
+        orderId: String,
+        status: String,
+        onSuccess: () -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .update(
+                "status",
+                status
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    fun completeOrder(
+        orderId: String,
+        onSuccess: () -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .update(
+                mapOf(
+                    "status" to "selesai",
+                    "completed" to true
+                )
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    fun cancelOrder(
+        orderId: String,
+        onSuccess: () -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .update(
+                mapOf(
+                    "status" to "cancel"
+                )
+            )
+            .addOnSuccessListener {
+                onSuccess()
             }
     }
 }

@@ -43,6 +43,26 @@ class UserRepository {
             }
     }
 
+    fun getUserById(
+        userId: String,
+        onResult: (User?) -> Unit
+    ) {
+
+        firestore.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener {
+
+                onResult(
+                    it.toObject(User::class.java)
+                )
+            }
+            .addOnFailureListener {
+
+                onResult(null)
+            }
+    }
+
     fun getCurrentUserData(
         onResult: (User?) -> Unit
     ) {

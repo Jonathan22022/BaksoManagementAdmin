@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Tambah Menu"
         android:textColor="@android:color/white"
-        android:backgroundTint="#FF3B30"
+        android:backgroundTint="@color/red"
         android:layout_marginBottom="12dp"/>
 
     <!-- List -->

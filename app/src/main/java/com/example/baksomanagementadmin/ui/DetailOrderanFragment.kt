@@ -1,6 +1,7 @@
 package com.example.baksomanagementadmin.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -14,236 +15,180 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.OrderItem
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
+import com.example.baksomanagementadmin.data.repository.OrderRepository
+import com.example.baksomanagementadmin.data.repository.UserRepository
 
-class DetailOrderanFragment : Fragment(R.layout.fragment_detail_orderan) {
+class DetailOrderanFragment :
+    Fragment(R.layout.fragment_detail_orderan) {
 
-    private val firestore = FirebaseClient.firestore
+    private val repository =
+        OrderRepository()
 
-    private lateinit var tvTitle: TextView
-    private lateinit var tvUser: TextView
-
-    private lateinit var rvItems: RecyclerView
-    private lateinit var spStatus: Spinner
-
-    private lateinit var btnSelesai: Button
-    private lateinit var btnCancel: Button
-
-    private var orderId: String = ""
-
-    private val statusList = listOf(
-        "pending",
-        "diproses",
-        "selesai",
-        "dibatalkan"
-    )
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        orderId = arguments?.getString("ORDER_ID") ?: ""
-    }
+    private val userRepository =
+        UserRepository()
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
     ) {
-        super.onViewCreated(view, savedInstanceState)
 
-        initViews(view)
+        val orderId =
+            arguments?.getString(
+                "ORDER_ID"
+            ) ?: return
 
-        setupRecyclerView()
+        val tvTitle =
+            view.findViewById<TextView>(
+                R.id.tvTitle
+            )
 
-        setupSpinner()
+        val tvNamaUser =
+            view.findViewById<TextView>(
+                R.id.tvNamaUser
+            )
 
-        loadOrderDetail()
+        val rvItems =
+            view.findViewById<RecyclerView>(
+                R.id.rvItems
+            )
 
-        btnSelesai.setOnClickListener {
-            showConfirmationDialog("selesai")
+        val spStatus =
+            view.findViewById<Spinner>(
+                R.id.spStatus
+            )
+
+        val btnUpdate =
+            view.findViewById<Button>(
+                R.id.btnUpdateStatus
+            )
+
+        val btnSiapDiambil =
+            view.findViewById<Button>(
+                R.id.btnSiapDiambil
+            )
+
+        val btnCancel =
+            view.findViewById<Button>(
+                R.id.btnCancel
+            )
+
+        rvItems.layoutManager =
+            LinearLayoutManager(
+                requireContext()
+            )
+
+        val statusList =
+            listOf(
+                "pending",
+                "diproses"
+            )
+
+        spStatus.adapter =
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                statusList
+            )
+
+        repository.getOrderDetail(
+            orderId
+        ){ order, items ->
+
+            if(order == null) return@getOrderDetail
+
+            tvTitle.text =
+                "Order #${order.id.take(8)}"
+
+            rvItems.adapter =
+                DetailOrderItemAdapter(
+                    items
+                )
+
+            userRepository.getUserById(
+                order.userID
+            ){ user ->
+
+                tvNamaUser.text =
+                    buildString {
+
+                        append("Nama : ")
+                        append(user?.nama)
+                        append("\n")
+                        append("Email : ")
+                        append(user?.email)
+                        append("\n")
+                        append("No HP : ")
+                        append(user?.noTelp)
+                    }
+            }
+
+            val index =
+                statusList.indexOf(
+                    order.status
+                )
+
+            if(index >= 0)
+                spStatus.setSelection(index)
+        }
+
+        btnUpdate.setOnClickListener {
+
+            repository.updateOrderStatus(
+                orderId,
+                spStatus.selectedItem.toString()
+            ){
+                Toast.makeText(
+                    requireContext(),
+                    "Status diperbarui",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        btnSiapDiambil.setOnClickListener {
+
+            repository.updateOrderStatus(
+                orderId,
+                "siap_diambil"
+            ){
+
+                Toast.makeText(
+                    requireContext(),
+                    "Pesanan siap diambil",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         btnCancel.setOnClickListener {
-            showConfirmationDialog("dibatalkan")
-        }
 
-        val btnUpdateStatus =
-            view.findViewById<Button>(R.id.btnUpdateStatus)
+            AlertDialog.Builder(requireContext())
+                .setTitle("Batalkan Pesanan")
+                .setMessage(
+                    "Yakin ingin membatalkan pesanan ini?"
+                )
+                .setPositiveButton("Ya") { _, _ ->
 
-        btnUpdateStatus.setOnClickListener {
+                    repository.cancelOrder(
+                        orderId
+                    ) {
 
-            val selectedStatus =
-                spStatus.selectedItem.toString()
+                        Toast.makeText(
+                            requireContext(),
+                            "Pesanan dibatalkan",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-            updateStatus(selectedStatus)
-        }
-    }
-
-    private fun initViews(view: View) {
-
-        tvTitle = view.findViewById(R.id.tvTitle)
-        tvUser = view.findViewById(R.id.tvUser)
-
-        rvItems = view.findViewById(R.id.rvItems)
-        spStatus = view.findViewById(R.id.spStatus)
-
-        btnSelesai = view.findViewById(R.id.btnSelesai)
-        btnCancel = view.findViewById(R.id.btnCancel)
-    }
-
-    private fun setupRecyclerView() {
-
-        rvItems.layoutManager =
-            LinearLayoutManager(requireContext())
-    }
-
-    private fun setupSpinner() {
-
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            statusList
-        )
-
-        spStatus.adapter = adapter
-    }
-
-    private fun loadOrderDetail() {
-
-        firestore.collection("orders")
-            .document(orderId)
-            .get()
-            .addOnSuccessListener { orderDoc ->
-
-                if (!orderDoc.exists()) {
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Order tidak ditemukan",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    return@addOnSuccessListener
-                }
-
-                val userId =
-                    orderDoc.getString("userID") ?: "-"
-
-                val status =
-                    orderDoc.getString("status") ?: "pending"
-
-                tvTitle.text = "Orderan #$orderId"
-
-                tvUser.text = "User ID : $userId"
-
-                val selectedPosition =
-                    statusList.indexOf(status)
-
-                if (selectedPosition >= 0) {
-                    spStatus.setSelection(selectedPosition)
-                }
-
-                loadOrderItems()
-            }
-            .addOnFailureListener {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Gagal mengambil data order",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun loadOrderItems() {
-
-        firestore.collection("orders")
-            .document(orderId)
-            .collection("items")
-            .get()
-            .addOnSuccessListener { result ->
-
-                val itemList =
-                    mutableListOf<OrderItem>()
-
-                result.documents.forEach { document ->
-
-                    val item =
-                        document.toObject(
-                            OrderItem::class.java
-                        )
-
-                    if (item != null) {
-                        itemList.add(item)
+                        requireActivity()
+                            .onBackPressedDispatcher
+                            .onBackPressed()
                     }
                 }
-
-                rvItems.adapter =
-                    AdminDetailItemAdapter(itemList)
-            }
-            .addOnFailureListener {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Gagal mengambil item order",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-    private fun showConfirmationDialog(
-        status: String
-    ) {
-
-        val message =
-            if (status == "selesai") {
-                "Yakin ingin menyelesaikan orderan ini?"
-            } else {
-                "Yakin ingin membatalkan orderan ini?"
-            }
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("Konfirmasi")
-            .setMessage(message)
-
-            .setPositiveButton("Ya") { _, _ ->
-
-                updateStatus(status)
-            }
-
-            .setNegativeButton(
-                "Tidak",
-                null
-            )
-            .show()
-    }
-
-    private fun updateStatus(
-        status: String
-    ) {
-
-        firestore.collection("orders")
-            .document(orderId)
-            .update("status", status)
-
-            .addOnSuccessListener {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Status berhasil diperbarui",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                requireActivity()
-                    .onBackPressedDispatcher
-                    .onBackPressed()
-            }
-
-            .addOnFailureListener {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Gagal memperbarui status",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+                .setNegativeButton(
+                    "Tidak",
+                    null
+                )
+                .show()
+        }
     }
 }

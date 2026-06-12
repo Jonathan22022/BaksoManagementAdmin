@@ -12,9 +12,6 @@
             android:id="@+id/action_homepageFragment_to_addMenuFragment"
             app:destination="@id/menu_add_makanan"/>
         <action
-            android:id="@+id/action_homepageFragment_to_detailMenuFragment"
-            app:destination="@id/menu_detail_makanan"/>
-        <action
             android:id="@+id/action_homepageFragment_to_editMenuFragment"
             app:destination="@id/menu_edit_makanan"/>
         <action
@@ -58,7 +55,7 @@
 
     <fragment
         android:id="@+id/menu_account"
-        android:name="com.example.baksomanagementadmin.ui.AccountFragment"
+        android:name="com.example.baksomanagementadmin.ui.account.AccountFragment"
         android:label="@string/menu_account"
         tools:layout="@layout/fragment_account"/>
 
@@ -79,16 +76,6 @@
         android:name="com.example.baksomanagementadmin.ui.EditBahanBakuFragment"
         android:label="@string/menu_edit_bahan_baku"
         tools:layout="@layout/fragment_edit_bahan_baku"/>
-
-    <fragment
-        android:id="@+id/menu_detail_makanan"
-        android:name="com.example.baksomanagementadmin.ui.DetailMenuFragment"
-        android:label="@string/menu_detail_makanan"
-        tools:layout="@layout/fragment_detail_menu">
-        <action
-            android:id="@+id/action_menuDetailFragment_to_editMenuFragment"
-            app:destination="@id/menu_edit_makanan"/>
-    </fragment>
 
     <fragment
         android:id="@+id/menu_edit_makanan"
@@ -126,7 +113,16 @@
         android:name="com.example.baksomanagementadmin.ui.HistoryOrderFragment"
         android:label="@string/menu_history"
         tools:layout="@layout/fragment_history_order">
+        <action
+            android:id="@+id/action_historyOrderFragment_to_detailHistoryOrderan"
+            app:destination="@id/detail_history_orderan"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/detail_history_orderan"
+        android:name="com.example.baksomanagementadmin.ui.DetailHistoryOrderan"
+        android:label="@string/detail_history_orderan"
+        tools:layout="@layout/fragment_detail_history_orderan"/>
 
     <fragment
         android:id="@+id/menu_notification"

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--fragment_detail_orderan.xml-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/tools"
     android:background="@drawable/bg_page"
     android:fillViewport="true">
 
@@ -19,6 +21,7 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/setting_card"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <TextView
@@ -29,7 +32,7 @@
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textSize="20sp"
-                android:textColor="#7A2E2E"
+                android:textColor="@color/primary_title"
                 android:padding="18dp" />
 
         </androidx.cardview.widget.CardView>
@@ -41,11 +44,11 @@
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:cardBackgroundColor="@color/setting_card">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -53,39 +56,57 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Informasi Pelanggan"
-                    android:textStyle="bold"
+                    android:textColor="@color/primary_title"
                     android:textSize="16sp"
-                    android:textColor="#7A2E2E" />
+                    android:textStyle="bold" />
 
+                <!--tvNamaUser dihubungakn dari userID di collection orders ke collection users-->
                 <TextView
-                    android:id="@+id/tvUser"
+                    android:id="@+id/tvNamaUser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="User ID"
-                    android:textColor="#555555"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="6dp"
+                    android:text="Nama User"
+                    android:textColor="@color/setting_text"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
         <!-- DAFTAR MENU -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Daftar Pesanan"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#7A2E2E"
-            android:layout_marginBottom="8dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvItems"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/setting_card"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daftar Pesanan"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/primary_title"
+                    android:layout_marginBottom="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="16dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- STATUS CARD -->
         <androidx.cardview.widget.CardView
@@ -93,6 +114,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/setting_card"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <LinearLayout
@@ -107,13 +129,14 @@
                     android:text="Status Orderan"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:textColor="#7A2E2E"
+                    android:textColor="@color/primary_title"
                     android:layout_marginBottom="10dp" />
 
                 <Spinner
                     android:id="@+id/spStatus"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp" />
+                    android:layout_height="50dp"
+                    android:textColor="@color/setting_text" />
 
             </LinearLayout>
 
@@ -130,16 +153,16 @@
             android:backgroundTint="#FB8C00"
             android:layout_marginTop="16dp" />
 
-        <!-- SELESAIKAN -->
+        <!-- SIAP DIAMBIL -->
         <Button
-            android:id="@+id/btnSelesai"
+            android:id="@+id/btnSiapDiambil"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="Selesaikan Orderan"
+            android:text="Siap Diambil"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:backgroundTint="#43A047"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"/>
 
         <!-- BATALKAN -->
         <Button
@@ -149,9 +172,7 @@
             android:text="Batalkan Orderan"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#E53935"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp" />
+            android:backgroundTint="#E53935" />
 
     </LinearLayout>
 

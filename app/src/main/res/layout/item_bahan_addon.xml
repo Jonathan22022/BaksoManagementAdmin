@@ -12,7 +12,8 @@
     <CheckBox
         android:id="@+id/cbBahan"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textColor="@color/setting_text"/>
 
     <TextView
         android:id="@+id/tvNamaBahan"
@@ -21,6 +22,7 @@
         android:layout_weight="1"
         android:text="Nama"
         android:textStyle="bold"
+        android:textColor="@color/setting_text"
         android:layout_marginStart="8dp"/>
 
     <EditText
@@ -28,5 +30,6 @@
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:hint="Jumlah"
+        android:textColor="@color/setting_text"
         android:inputType="numberDecimal"/>
 </LinearLayout>

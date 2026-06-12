@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.example.baksomanagementadmin.data.repository.AuthRepository
 import com.example.baksomanagementadmin.data.repository.UserRepository
-import com.example.baksomanagementadmin.utils.SessionManager
+import androidx.appcompat.app.AlertDialog
 import com.example.baksomanagementadmin.utils.ThemeManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -24,11 +24,6 @@ class HomepageActivity : AppCompatActivity() {
     private val firestore = FirebaseClient.firestore
     private lateinit var imageViewProfile: ImageView
     private lateinit var tvUserName: TextView
-
-    override fun onResume() {
-        super.onResume()
-        SessionManager.saveLoginSession(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(
@@ -73,13 +68,28 @@ class HomepageActivity : AppCompatActivity() {
                 R.id.menu_about_us -> controller.navigate(R.id.menu_about_us)
                 R.id.menu_setting -> controller.navigate(R.id.menu_setting)
                 R.id.menu_logout -> {
-                    authRepository.logout()
-                    SessionManager.clearSession(this)
-                    val intent =
-                        Intent(this, MainActivity::class.java) // activity yg ada FirstPageFragment
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+
+                    AlertDialog.Builder(this)
+                        .setTitle("Logout")
+                        .setMessage("Apakah Anda yakin ingin logout?")
+                        .setPositiveButton("Ya") { _, _ ->
+
+                            authRepository.logout()
+
+                            val intent =
+                                Intent(this, MainActivity::class.java)
+
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                            startActivity(intent)
+                            finish()
+                        }
+                        .setNegativeButton("Batal") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
                 }
             }
             drawerLayout.close()

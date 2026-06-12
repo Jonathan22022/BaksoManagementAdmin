@@ -23,6 +23,8 @@
     <string name="menu_weekly_insight">Weekly Insight</string>
     <string name="notificationFragment">Notification</string>
     <string name="detailOrderanFragment">Detail Orderan</string>
+    <string name="menu_notification">Notification</string>
+    <string name="detail_history_orderan">Detail History Orderan</string>
     <string name="menu_history">History</string>
     <string name="menu_order">Order</string>
     <string name="menu_setting">Setting</string>
