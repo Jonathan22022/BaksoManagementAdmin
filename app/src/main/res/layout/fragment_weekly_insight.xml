@@ -72,6 +72,26 @@
 
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/setting_card"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="3dp">
+
+            <TextView
+                android:id="@+id/tvModalAwal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Total Modal Awal : Rp 0"
+                android:textColor="#9C27B0"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+        </androidx.cardview.widget.CardView>
+
         <!-- INCOME CARD -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -111,6 +131,26 @@
                 android:textColor="#EF5350"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/setting_card"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="3dp">
+
+            <TextView
+                android:id="@+id/tvProfit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Laba Bersih : Rp 0"
+                android:textColor="#2196F3"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
 
         </androidx.cardview.widget.CardView>
 

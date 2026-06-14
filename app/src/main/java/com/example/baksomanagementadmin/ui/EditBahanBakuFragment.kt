@@ -30,10 +30,11 @@ class EditBahanBakuFragment : Fragment() {
     private lateinit var btnSubmit: Button
     private lateinit var spSatuan: Spinner
     private val TAG = "EditBahanBakuDebug"
-    private val satuanList = listOf("kg", "liter")
+    private val satuanList = listOf("kg", "gram","liter")
     private var imageUri: Uri? = null
     private var currentImageUrl: String = ""
     private var bahanId: String = ""
+    private var currentBahan: BahanBaku? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +46,7 @@ class EditBahanBakuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         repository = BahanBakuRepository()
-        bahanId = arguments?.getString("BAHAN_ID") ?: ""
+        bahanId = arguments?.getString("BAHANBAKU_ID") ?: ""
         etNama = view.findViewById(R.id.etNamaMenu)
         etHarga = view.findViewById(R.id.etHarga)
         etBerat = view.findViewById(R.id.etBerat)
@@ -54,13 +55,69 @@ class EditBahanBakuFragment : Fragment() {
         btnPickImage = view.findViewById(R.id.btnPickImage)
         btnSubmit = view.findViewById(R.id.btnSubmit)
         spSatuan = view.findViewById(R.id.spSatuan)
-        val satuanList = listOf("kg", "liter")
-        val adapter = ArrayAdapter(
+        val satuanList = listOf("kg", "gram", "liter")
+        val adapter = object : ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_spinner_item,
             satuanList
+        ) {
+
+            override fun getView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+
+                val view = super.getView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                (view as android.widget.TextView).setTextColor(
+                    resources.getColor(
+                        R.color.setting_text,
+                        null
+                    )
+                )
+
+                return view
+            }
+
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+
+                val view = super.getDropDownView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                (view as android.widget.TextView).setTextColor(
+                    resources.getColor(
+                        R.color.setting_text,
+                        null
+                    )
+                )
+
+                view.setBackgroundColor(
+                    resources.getColor(
+                        R.color.setting_card,
+                        null
+                    )
+                )
+
+                return view
+            }
+        }
+
+        adapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
         )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
         spSatuan.adapter = adapter
         btnSubmit.text = "Update Bahan Baku"
 
@@ -81,8 +138,11 @@ class EditBahanBakuFragment : Fragment() {
 
             if (data != null) {
                 etNama.setText(data.nama)
-                etHarga.setText(data.harga.toString())
-                etBerat.setText(data.berat.toString())
+                etHarga.setText(data.hargaAwal.toString())
+                etBerat.setText(data.beratAwal.toString())
+
+                etHarga.isEnabled = false
+                etBerat.isEnabled = false
 
                 currentImageUrl = data.gambarUrl
 
@@ -102,49 +162,69 @@ class EditBahanBakuFragment : Fragment() {
     // 🔥 Update data
     private fun updateData() {
 
-        val nama = etNama.text.toString()
-        val harga = etHarga.text.toString().toIntOrNull() ?: 0
-        val berat = etBerat.text.toString().toDoubleOrNull() ?: 0.0
-        val satuan = spSatuan.selectedItem.toString()
+        val nama =
+            etNama.text.toString()
+
+        val satuan =
+            spSatuan.selectedItem.toString()
+
         if (nama.isEmpty()) {
+
             toast("Nama wajib diisi")
             return
         }
 
         if (imageUri != null) {
-            // upload gambar baru
-            uploadImageToCloudinary(imageUri!!,
+
+            uploadImageToCloudinary(
+                imageUri!!,
                 onSuccess = { url ->
-                    saveToFirestore(nama, harga, berat,satuan, url)
+
+                    saveToFirestore(
+                        nama,
+                        satuan,
+                        url
+                    )
                 },
-                onError = { toast(it) }
+                onError = {
+                    toast(it)
+                }
             )
+
         } else {
-            // pakai gambar lama
-            saveToFirestore(nama, harga, berat, satuan,currentImageUrl)
+
+            saveToFirestore(
+                nama,
+                satuan,
+                currentImageUrl
+            )
         }
     }
 
     private fun saveToFirestore(
         nama: String,
-        harga: Int,
-        berat: Double,
         satuan: String,
         imageUrl: String
     ) {
-        val updated = BahanBaku(
-            id = bahanId,
-            nama = nama,
-            harga = harga,
-            berat = berat,
-            satuan = satuan,
-            gambarUrl = imageUrl
-        )
+
+        val oldData =
+            currentBahan ?: return
+
+        val updated =
+            oldData.copy(
+                nama = nama,
+                satuan = satuan,
+                gambarUrl = imageUrl
+            )
 
         repository.updateBahanBaku(
             updated,
-            onSuccess = { toast("Berhasil update") },
-            onError = { toast(it.message ?: "Error") }
+            onSuccess = {
+                toast("Berhasil update")
+            },
+            onError = {
+                toast(it.message ?: "Error")
+            }
         )
     }
 

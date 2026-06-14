@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_bahanBakuFragment_to_editBahanBakuFragment"
             app:destination="@id/menu_edit_bahan_baku"/>
+        <action
+            android:id="@+id/action_bahanBakuFragment_to_tambahStokBahanFragment"
+            app:destination="@id/tambah_stok_bahan"/>
     </fragment>
 
     <fragment
@@ -133,6 +136,12 @@
             android:id="@+id/action_notificationFragment_to_detailOrderanFragment"
             app:destination="@id/detailOrderanFragment"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/tambah_stok_bahan"
+        android:name="com.example.baksomanagementadmin.ui.TambahStokBahanFragment"
+        android:label="@string/tambah_stok_bahan"
+        tools:layout="@layout/fragment_tambah_stok_bahan"/>
 
     <fragment
         android:id="@+id/detailOrderanFragment"

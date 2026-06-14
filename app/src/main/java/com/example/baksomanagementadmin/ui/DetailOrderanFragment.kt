@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
-import com.example.baksomanagementadmin.data.model.OrderItem
-import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.example.baksomanagementadmin.data.repository.OrderRepository
 import com.example.baksomanagementadmin.data.repository.UserRepository
 
@@ -83,12 +81,69 @@ class DetailOrderanFragment :
                 "diproses"
             )
 
-        spStatus.adapter =
-            ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                statusList
-            )
+        val spinnerAdapter = object : ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            statusList
+        ) {
+
+            override fun getView(
+                position: Int,
+                convertView: View?,
+                parent: android.view.ViewGroup
+            ): View {
+
+                val view = super.getView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                (view as TextView).setTextColor(
+                    resources.getColor(
+                        R.color.setting_text,
+                        null
+                    )
+                )
+
+                return view
+            }
+
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: android.view.ViewGroup
+            ): View {
+
+                val view = super.getDropDownView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                (view as TextView).setTextColor(
+                    resources.getColor(
+                        R.color.setting_text,
+                        null
+                    )
+                )
+
+                view.setBackgroundColor(
+                    resources.getColor(
+                        R.color.setting_card,
+                        null
+                    )
+                )
+
+                return view
+            }
+        }
+
+        spinnerAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        spStatus.adapter = spinnerAdapter
 
         repository.getOrderDetail(
             orderId
@@ -129,19 +184,69 @@ class DetailOrderanFragment :
 
             if(index >= 0)
                 spStatus.setSelection(index)
+
+            if (order.status == "diproses") {
+                btnSiapDiambil.visibility = View.VISIBLE
+            } else {
+                btnSiapDiambil.visibility = View.GONE
+            }
         }
 
         btnUpdate.setOnClickListener {
 
-            repository.updateOrderStatus(
-                orderId,
+            val selectedStatus =
                 spStatus.selectedItem.toString()
-            ){
-                Toast.makeText(
-                    requireContext(),
-                    "Status diperbarui",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+            Log.d(
+                "STOK_DEBUG",
+                "BTN UPDATE DIKLIK -> $selectedStatus"
+            )
+
+            if (selectedStatus == "diproses") {
+                Log.d(
+                    "STOK_DEBUG",
+                    "BTN UPDATE DIKLIK -> $selectedStatus"
+                )
+
+                repository.gunakanBahanPesanan(
+                    orderId
+                ) {
+                    Log.d(
+                        "STOK_DEBUG",
+                        "SELESAI GUNAKAN BAHAN"
+                    )
+                    repository.updateOrderStatus(
+                        orderId,
+                        "diproses"
+                    ) {
+                        Log.d(
+                            "STOK_DEBUG",
+                            "STATUS BERHASIL DIPROSES"
+                        )
+                        btnSiapDiambil.visibility =
+                            View.VISIBLE
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Status diproses & stok dikurangi",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+            } else {
+
+                repository.updateOrderStatus(
+                    orderId,
+                    selectedStatus
+                ) {
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Status diperbarui",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
 

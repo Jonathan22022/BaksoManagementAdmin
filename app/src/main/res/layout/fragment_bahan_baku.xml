@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--fragment_bahan_baku.xml-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,9 +30,61 @@
         android:textColor="@android:color/white"
         android:backgroundTint="@color/red"/>
 
+    <Button
+        android:id="@+id/btnTambahStok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Stok Bahan"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red"/>
+
+    <LinearLayout
+        android:id="@+id/tabContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_tab_container"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnModalAwal"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Modal Awal"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_tab_active"/>
+
+        <TextView
+            android:id="@+id/btnUpdateModalTerbaru"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Modal Terbaru"
+            android:textStyle="bold"
+            android:textColor="@color/red"/>
+
+        <TextView
+            android:id="@+id/btnRiwayatModal"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Riwayat"
+            android:textStyle="bold"
+            android:textColor="@color/red"/>
+    </LinearLayout>
+
     <!-- List -->
-    <!-- Header Table -->
+    <!-- Header Table Modal Awal-->
     <HorizontalScrollView
+        android:id="@+id/headerModalAwal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
@@ -46,7 +99,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:background="@color/setting_card"
+                android:background="@drawable/bg_table_border"
                 android:orientation="horizontal">
 
                 <TextView
@@ -109,6 +162,168 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerBahanBaku"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <!-- List -->
+    <!-- Header Table Modal Terbaru-->
+    <HorizontalScrollView
+        android:id="@+id/headerModalTerbaru"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_table_border"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Gambar"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Nama"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Harga"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Berat"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Satuan"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Edit"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Hapus"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerBahanBakuTerbaru"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <!-- List -->
+    <!-- Header Table Riwayat-->
+    <HorizontalScrollView
+        android:id="@+id/headerRiwayat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_table_border"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Gambar"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Nama Bahan"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Jumlah"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Harga Beli"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Tanggal"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerRiwayatPembelian"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
 

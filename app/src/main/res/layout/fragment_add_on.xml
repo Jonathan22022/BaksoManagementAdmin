@@ -42,7 +42,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:background="@color/setting_card"
+                android:background="@drawable/bg_table_border"
                 android:orientation="horizontal">
 
                 <TextView
@@ -66,6 +66,22 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="Harga"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Status Stok"
+                    android:textStyle="bold"
+                    android:textColor="@color/setting_text"/>
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Bahan Dibutuhkan"
                     android:textStyle="bold"
                     android:textColor="@color/setting_text"/>
 

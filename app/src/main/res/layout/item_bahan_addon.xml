@@ -25,11 +25,28 @@
         android:textColor="@color/setting_text"
         android:layout_marginStart="8dp"/>
 
-    <EditText
-        android:id="@+id/etJumlah"
-        android:layout_width="90dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Jumlah"
-        android:textColor="@color/setting_text"
-        android:inputType="numberDecimal"/>
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etJumlah"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:hint="Jumlah"
+            android:textColor="@color/setting_text"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/tvSatuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:text="kg"
+            android:textStyle="bold"
+            android:textColor="@color/setting_text"/>
+
+    </LinearLayout>
 </LinearLayout>

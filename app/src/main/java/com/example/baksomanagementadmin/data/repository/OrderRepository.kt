@@ -1,5 +1,6 @@
 package com.example.baksomanagementadmin.data.repository
 
+import android.util.Log
 import com.example.baksomanagementadmin.data.model.AdminOrderItem
 import com.example.baksomanagementadmin.data.model.Order
 import com.example.baksomanagementadmin.data.model.AddOn
@@ -10,6 +11,9 @@ import com.example.baksomanagementadmin.data.remote.FirebaseClient
 class OrderRepository {
 
     private val firestore = FirebaseClient.firestore
+    private val menuRef = firestore.collection("bakso")
+    private val bahanRef = firestore.collection("bahanbaku")
+    private val addonRef = firestore.collection("addons")
 
     fun getOrderById(
         id: String,
@@ -245,6 +249,15 @@ class OrderRepository {
         onSuccess: () -> Unit
     ) {
 
+        Log.d(
+            "ADMIN_ORDER_DEBUG",
+            """
+        UPDATE STATUS DIPANGGIL
+        orderId = $orderId
+        status  = $status
+        """.trimIndent()
+        )
+
         firestore.collection("orders")
             .document(orderId)
             .update(
@@ -252,7 +265,21 @@ class OrderRepository {
                 status
             )
             .addOnSuccessListener {
+
+                Log.d(
+                    "ADMIN_ORDER_DEBUG",
+                    "BERHASIL UPDATE STATUS"
+                )
+
                 onSuccess()
+            }
+            .addOnFailureListener {
+
+                Log.e(
+                    "ADMIN_ORDER_DEBUG",
+                    "GAGAL UPDATE STATUS",
+                    it
+                )
             }
     }
 
@@ -279,6 +306,14 @@ class OrderRepository {
         onSuccess: () -> Unit
     ) {
 
+        Log.d(
+            "ADMIN_ORDER_DEBUG",
+            """
+        CANCEL ORDER
+        orderId = $orderId
+        """.trimIndent()
+        )
+
         firestore.collection("orders")
             .document(orderId)
             .update(
@@ -287,7 +322,219 @@ class OrderRepository {
                 )
             )
             .addOnSuccessListener {
+
+                Log.d(
+                    "ADMIN_ORDER_DEBUG",
+                    "ORDER BERHASIL DICANCEL"
+                )
+
                 onSuccess()
+            }
+            .addOnFailureListener {
+
+                Log.e(
+                    "ADMIN_ORDER_DEBUG",
+                    "GAGAL CANCEL ORDER",
+                    it
+                )
+            }
+    }
+
+    fun gunakanBahanPesanan(
+        orderId: String,
+        onSuccess: () -> Unit
+    ) {
+        Log.d(
+            "STOK_DEBUG",
+            "gunakanBahanPesanan() dipanggil"
+        )
+
+        Log.d(
+            "STOK_DEBUG",
+            "orderId = $orderId"
+        )
+        firestore.collection("orders")
+            .document(orderId)
+            .collection("items")
+            .get()
+            .addOnSuccessListener { itemDocs ->
+                Log.d(
+                    "STOK_DEBUG",
+                    "Jumlah item = ${itemDocs.size()}"
+                )
+                val batch =
+                    firestore.batch()
+
+                var totalTask = 0
+                var selesaiTask = 0
+
+                val bahanDipakai =
+                    mutableMapOf<String, Double>()
+
+                itemDocs.toObjects(
+                    OrderItem::class.java
+                ).forEach { item ->
+                    Log.d(
+                        "STOK_DEBUG",
+                        """
+                        MENU
+                            menu_id=${item.menu_id}
+                            nama=${item.nama}
+                            qty=${item.quantity}
+                            addon=${item.addons.size}
+                            """.trimIndent()
+                    )
+                    totalTask++
+
+                    menuRef.document(item.menu_id)
+                        .get()
+                        .addOnSuccessListener { menuDoc ->
+
+                            val bahanList =
+                                menuDoc.get("bahanList")
+                                        as? List<Map<String, Any>>
+                                    ?: emptyList()
+
+                            bahanList.forEach { bahan ->
+
+                                val bahanId =
+                                    bahan["bahanId"].toString()
+
+                                val jumlah =
+                                    (bahan["jumlah"] as Number)
+                                        .toDouble()
+                                Log.d(
+                                    "STOK_DEBUG",
+                                    """
+                                    BAHAN MENU
+                                    bahanId=$bahanId
+                                    jumlah=$jumlah
+                                    qtyOrder=${item.quantity}
+                                    total=${jumlah * item.quantity}
+                                    """.trimIndent()
+                                )
+
+                                bahanDipakai[bahanId] =
+                                    (bahanDipakai[bahanId] ?: 0.0) +
+                                            jumlah * item.quantity
+                            }
+
+                            selesaiTask++
+
+                            if (selesaiTask == totalTask) {
+
+                                prosesAddon(
+                                    itemDocs,
+                                    bahanDipakai,
+                                    batch,
+                                    onSuccess
+                                )
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun prosesAddon(
+        itemDocs: com.google.firebase.firestore.QuerySnapshot,
+        bahanDipakai: MutableMap<String, Double>,
+        batch: com.google.firebase.firestore.WriteBatch,
+        onSuccess: () -> Unit
+    ) {
+
+        val items =
+            itemDocs.toObjects(
+                OrderItem::class.java
+            )
+
+        var totalAddon = 0
+        var selesaiAddon = 0
+
+        items.forEach { item ->
+
+            item.addons.forEach { addon ->
+
+                totalAddon++
+
+                firestore.collection("addons")
+                    .document(addon.id)
+                    .get()
+                    .addOnSuccessListener { addonDoc ->
+
+                        val bahanList =
+                            addonDoc.get("bahanList")
+                                    as? List<Map<String, Any>>
+                                ?: emptyList()
+
+                        bahanList.forEach { bahan ->
+
+                            val bahanId =
+                                bahan["bahanId"].toString()
+
+                            val jumlah =
+                                (bahan["jumlah"] as Number)
+                                    .toDouble()
+
+                            bahanDipakai[bahanId] =
+                                (bahanDipakai[bahanId] ?: 0.0) +
+                                        jumlah
+                        }
+
+                        selesaiAddon++
+
+                        if (selesaiAddon == totalAddon) {
+                            updateStock(
+                                bahanDipakai,
+                                batch,
+                                onSuccess
+                            )
+                        }
+                    }
+            }
+        }
+
+        if (totalAddon == 0) {
+            updateStock(
+                bahanDipakai,
+                batch,
+                onSuccess
+            )
+        }
+    }
+
+    private fun updateStock(
+        bahanDipakai: Map<String, Double>,
+        batch: com.google.firebase.firestore.WriteBatch,
+        onSuccess: () -> Unit
+    ) {
+
+        firestore.collection("bahanbaku")
+            .get()
+            .addOnSuccessListener { bahanDocs ->
+
+                bahanDocs.forEach { doc ->
+
+                    val bahanId = doc.id
+
+                    val dipakai =
+                        bahanDipakai[bahanId]
+                            ?: return@forEach
+
+                    val stok =
+                        doc.getDouble("berat")
+                            ?: 0.0
+
+                    batch.update(
+                        doc.reference,
+                        "berat",
+                        stok - dipakai
+                    )
+                }
+
+                batch.commit()
+                    .addOnSuccessListener {
+                        onSuccess()
+                    }
             }
     }
 }

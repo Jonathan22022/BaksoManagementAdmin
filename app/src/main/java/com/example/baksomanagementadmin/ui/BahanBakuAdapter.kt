@@ -39,19 +39,17 @@ class BahanBakuAdapter(
 
         holder.nama.text = item.nama
 
-        holder.harga.text =
-            "Rp %,d".format(item.harga)
-                .replace(',', '.')
+        holder.harga.text = "Rp %,d".format(item.hargaAwal)
+            .replace(',', '.')
 
-        holder.berat.text =
-            item.berat.toString()
-
-        holder.satuan.text =
-            item.satuan
+        holder.berat.text = item.beratAwal.toString()
 
         Glide.with(holder.itemView.context)
             .load(item.gambarUrl)
             .into(holder.img)
+
+        holder.satuan.text =
+            item.satuan
 
         holder.btnEdit.setOnClickListener {
             onEdit(item)

@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.repository.AddOnRepository
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 
 class AddOnFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var addOnRepository: AddOnRepository
+    private val bahanRepository = BahanBakuRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,33 +48,46 @@ class AddOnFragment : Fragment() {
     }
 
     private fun loadAddOn() {
-        addOnRepository.getAddOnList { addOnList ->
 
-            val adapter = AddOnAdapter(
-                addOnList,
-                onEditClick = { addon ->
-                    val bundle = Bundle().apply {
-                        putString("ADDON_ID", addon.id)
-                    }
-                    findNavController().navigate(
-                        R.id.action_addOnFragment_to_editAddOnFragment,
-                        bundle
-                    )
-                },
-                onDeleteClick = { addon ->
-                    addOnRepository.deleteAddOn(
-                        addon,
-                        onSuccess = {
-                            loadAddOn() // refresh list setelah delete
+        bahanRepository.getBahanBakuList { bahanList ->
+
+            addOnRepository.getAddOnList { addOnList ->
+
+                recyclerView.adapter =
+                    AddOnAdapter(
+                        addOnList = addOnList,
+                        bahanList = bahanList,
+                        onEditClick = { addon ->
+
+                            val bundle = Bundle().apply {
+                                putString(
+                                    "ADDON_ID",
+                                    addon.id
+                                )
+                            }
+
+                            findNavController().navigate(
+                                R.id.action_addOnFragment_to_editAddOnFragment,
+                                bundle
+                            )
                         },
-                        onError = {
-                            Log.e("MenuFragment", "Delete gagal: ${it.message}")
+                        onDeleteClick = { addon ->
+
+                            addOnRepository.deleteAddOn(
+                                addon,
+                                onSuccess = {
+                                    loadAddOn()
+                                },
+                                onError = {
+                                    Log.e(
+                                        "AddOnFragment",
+                                        it.message ?: ""
+                                    )
+                                }
+                            )
                         }
                     )
-                }
-            )
-
-            recyclerView.adapter = adapter
+            }
         }
     }
 }

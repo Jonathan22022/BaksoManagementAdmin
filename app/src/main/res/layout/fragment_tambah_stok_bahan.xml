@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--fragment_tambah_stok_bahan.xml-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_page">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tambah Stok Bahan"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/primary_title"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="@drawable/bg_menu_title"
+            android:layout_marginBottom="10dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/setting_card">
+
+            <LinearLayout
+                android:id="@+id/formContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <Spinner
+                    android:id="@+id/spBahan"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:textColor="@color/setting_text"
+                    android:background="@drawable/bg_edittext"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="20dp" />
+
+                <EditText
+                    android:id="@+id/etHargaBeli"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:hint="Total Harganya"
+                    android:textColor="@color/setting_text"
+                    android:background="@drawable/bg_edittext"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="20dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/etJumlah"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:hint="Jumlah"
+                        android:textColor="@color/setting_text"
+                        android:background="@drawable/bg_edittext"
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginBottom="20dp" />
+
+                    <TextView
+                        android:id="@+id/etSatuan"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="8dp"
+                        android:textColor="@color/setting_text"
+                        android:background="@drawable/bg_edittext"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnSimpan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Tambah Bahan Baku"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/red" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -33,12 +33,12 @@ class BahanMenuAdapter(
 
         val cbBahan: CheckBox =
             view.findViewById(R.id.cbBahan)
-
         val tvNama: TextView =
             view.findViewById(R.id.tvNamaBahan)
-
         val etJumlah: EditText =
             view.findViewById(R.id.etJumlah)
+        val tvSatuan: TextView =
+            view.findViewById(R.id.tvSatuan)
     }
 
     override fun onCreateViewHolder(
@@ -74,6 +74,7 @@ class BahanMenuAdapter(
 
         holder.cbBahan.isChecked = isSelected
 
+        holder.tvSatuan.text = "/ ${item.satuan} (stok ${item.berat})"
         holder.etJumlah.isEnabled = isSelected
 
         if (isSelected) {

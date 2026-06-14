@@ -1,6 +1,8 @@
 package com.example.baksomanagementadmin.data.repository
 
 import com.example.baksomanagementadmin.data.model.BahanBaku
+import com.example.baksomanagementadmin.data.model.OrderItem
+import com.example.baksomanagementadmin.data.model.PembelianBahan
 import com.example.baksomanagementadmin.data.remote.FirebaseClient
 import com.google.firebase.firestore.ktx.toObject
 
@@ -34,12 +36,43 @@ class BahanBakuRepository {
         onSuccess: () -> Unit,
         onError: (Exception) -> Unit
     ) {
-        val docRef = firestore.collection("bahanbaku").document()
-        val newData = bahanBaku.copy(id = docRef.id)
 
-        docRef.set(newData)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onError(it) }
+        val docRef =
+            firestore.collection("bahanbaku")
+                .document()
+
+        val newBahan =
+            bahanBaku.copy(id = docRef.id)
+
+        docRef.set(newBahan)
+            .addOnSuccessListener {
+
+                val pembelianRef =
+                    firestore.collection("pembelian_bahan")
+                        .document()
+
+                val pembelian =
+                    hashMapOf(
+                        "id" to pembelianRef.id,
+                        "bahanId" to docRef.id,
+                        "namaBahan" to newBahan.nama,
+                        "beratBeli" to newBahan.beratAwal,
+                        "satuan" to newBahan.satuan,
+                        "hargaBeli" to newBahan.hargaAwal,
+                        "createdAt" to System.currentTimeMillis()
+                    )
+
+                pembelianRef.set(pembelian)
+                    .addOnSuccessListener {
+                        onSuccess()
+                    }
+                    .addOnFailureListener {
+                        onError(it)
+                    }
+            }
+            .addOnFailureListener {
+                onError(it)
+            }
     }
 
     fun updateBahanBaku(
@@ -68,7 +101,7 @@ class BahanBakuRepository {
         onResult: (List<BahanBaku>) -> Unit
     ) {
 
-        firestore.collection("bahan_baku")
+        firestore.collection("bahanbaku")
             .get()
             .addOnSuccessListener { result ->
 
@@ -81,6 +114,28 @@ class BahanBakuRepository {
                 }
 
                 onResult(list)
+            }
+    }
+
+    fun addPembelianBahan(
+        pembelian: PembelianBahan,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+
+        val docRef =
+            firestore.collection("pembelian_bahan")
+                .document()
+
+        val newData =
+            pembelian.copy(id = docRef.id)
+
+        docRef.set(newData)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onError(it)
             }
     }
 }

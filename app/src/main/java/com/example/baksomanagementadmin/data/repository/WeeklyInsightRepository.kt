@@ -60,14 +60,18 @@ class WeeklyInsightRepository {
                         expenseMap
                     ) { expenseTotal ->
 
-                        onResult(
-                            WeeklyInsight(
-                                dailyIncome = incomeMap,
-                                dailyExpense = expenseMap,
-                                totalIncome = 0,
-                                totalExpense = expenseTotal
+                        loadModalAwal { totalModalAwal ->
+
+                            onResult(
+                                WeeklyInsight(
+                                    dailyIncome = incomeMap,
+                                    dailyExpense = expenseMap,
+                                    totalModalAwal = totalModalAwal,
+                                    totalIncome = 0,
+                                    totalExpense = expenseTotal
+                                )
                             )
-                        )
+                        }
                     }
 
                     return@addOnSuccessListener
@@ -118,24 +122,31 @@ class WeeklyInsightRepository {
                                     expenseMap
                                 ) { expenseTotal ->
 
-                                    totalExpense = expenseTotal
+                                    loadModalAwal { totalModalAwal ->
 
-                                    val bestMenu =
-                                        menuCounter.maxByOrNull {
-                                            it.value
-                                        }
+                                        totalExpense = expenseTotal
 
-                                    onResult(
-                                        WeeklyInsight(
-                                            dailyIncome = incomeMap,
-                                            dailyExpense = expenseMap,
-                                            totalIncome = totalIncome,
-                                            totalExpense = totalExpense,
-                                            bestMenu = bestMenu?.key ?: "-",
-                                            totalBestMenuOrdered =
-                                                bestMenu?.value ?: 0
+                                        val bestMenu =
+                                            menuCounter.maxByOrNull {
+                                                it.value
+                                            }
+
+                                        onResult(
+                                            WeeklyInsight(
+                                                dailyIncome = incomeMap,
+                                                dailyExpense = expenseMap,
+
+                                                totalModalAwal = totalModalAwal,
+
+                                                totalIncome = totalIncome,
+                                                totalExpense = totalExpense,
+
+                                                bestMenu = bestMenu?.key ?: "-",
+                                                totalBestMenuOrdered =
+                                                    bestMenu?.value ?: 0
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
@@ -150,7 +161,7 @@ class WeeklyInsightRepository {
         onComplete: (Int) -> Unit
     ) {
 
-        firestore.collection("bahanbaku")
+        firestore.collection("riwayat_pembelian_bahan")
             .get()
             .addOnSuccessListener { result ->
 
@@ -158,20 +169,24 @@ class WeeklyInsightRepository {
 
                 result.documents.forEach { doc ->
 
-                    val harga =
-                        doc.getLong("harga")?.toInt() ?: 0
+                    val hargaBeli =
+                        doc.getLong("hargaBeli")
+                            ?.toInt() ?: 0
 
                     val createdAt =
-                        doc.getLong("createdAt") ?: 0L
+                        doc.getLong("createdAt")
+                            ?: 0L
 
                     if (createdAt in startMillis..endMillis) {
 
-                        totalExpense += harga
+                        totalExpense += hargaBeli
 
-                        val dayName = getDayName(createdAt)
+                        val dayName =
+                            getDayName(createdAt)
 
                         expenseMap[dayName] =
-                            expenseMap[dayName]!! + harga.toFloat()
+                            (expenseMap[dayName] ?: 0f) +
+                                    hargaBeli.toFloat()
                     }
                 }
 
@@ -195,5 +210,27 @@ class WeeklyInsightRepository {
             Calendar.SATURDAY -> "Sab"
             else -> "Min"
         }
+    }
+
+    private fun loadModalAwal(
+        onComplete: (Int) -> Unit
+    ) {
+        firestore.collection("bahanbaku")
+            .get()
+            .addOnSuccessListener { result ->
+
+                var totalModalAwal = 0
+
+                result.documents.forEach { doc ->
+
+                    val hargaAwal =
+                        doc.getLong("hargaAwal")
+                            ?.toInt() ?: 0
+
+                    totalModalAwal += hargaAwal
+                }
+
+                onComplete(totalModalAwal)
+            }
     }
 }

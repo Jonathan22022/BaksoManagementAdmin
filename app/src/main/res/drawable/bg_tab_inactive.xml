@@ -1,5 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-
+<!--bg_tab_inactive.xml-->
     <solid android:color="@color/setting_card"/>
 
     <stroke

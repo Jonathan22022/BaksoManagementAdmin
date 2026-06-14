@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--fragment_add_bahan_baku.xml-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_page">
 
     <LinearLayout
@@ -24,7 +26,7 @@
         <!-- Harga -->
         <EditText
             android:id="@+id/etHarga"
-            android:hint="Harga (Rp)"
+            android:hint="Total Harga (Rp)"
             android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -43,7 +45,7 @@
 
             <EditText
                 android:id="@+id/etBerat"
-                android:hint="Jumlah"
+                android:hint="Jumlah Stok"
                 android:inputType="numberDecimal"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
@@ -67,7 +69,8 @@
             android:textStyle="bold"
             android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/setting_text"/>
 
         <FrameLayout
             android:id="@+id/btnPickImage"
@@ -92,7 +95,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:tint="@color/placeholder_icon"
+                    app:tint="@color/placeholder_icon"
                     android:src="@android:drawable/ic_menu_gallery"/>
 
                 <TextView

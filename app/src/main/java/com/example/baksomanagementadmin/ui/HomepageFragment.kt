@@ -11,11 +11,13 @@ import com.example.baksomanagementadmin.data.repository.MenuRepository
 import androidx.navigation.fragment.findNavController
 import android.util.Log
 import android.widget.Button
+import com.example.baksomanagementadmin.data.repository.BahanBakuRepository
 
 class HomepageFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var menuRepository: MenuRepository
+    private val bahanRepository = BahanBakuRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,33 +49,46 @@ class HomepageFragment : Fragment() {
     }
 
     private fun loadMenu() {
-        menuRepository.getMenuList { menuList ->
 
-            val adapter = MenuAdapter(
-                menuList,
-                onEditClick = { menu ->
-                    val bundle = Bundle().apply {
-                        putString("MENU_ID", menu.id)
-                    }
-                    findNavController().navigate(
-                        R.id.action_homepageFragment_to_editMenuFragment,
-                        bundle
-                    )
-                },
-                onDeleteClick = { menu ->
-                    menuRepository.deleteMenu(
-                        menu,
-                        onSuccess = {
-                            loadMenu() // refresh list setelah delete
+        bahanRepository.getBahanBakuList { bahanList ->
+
+            menuRepository.getMenuList { menuList ->
+
+                recyclerView.adapter =
+                    MenuAdapter(
+                        menuList = menuList,
+                        bahanList = bahanList,
+                        onEditClick = { menu ->
+
+                            val bundle = Bundle().apply {
+                                putString(
+                                    "MENU_ID",
+                                    menu.id
+                                )
+                            }
+
+                            findNavController().navigate(
+                                R.id.action_homepageFragment_to_editMenuFragment,
+                                bundle
+                            )
                         },
-                        onError = {
-                            Log.e("MenuFragment", "Delete gagal: ${it.message}")
+                        onDeleteClick = { menu ->
+
+                            menuRepository.deleteMenu(
+                                menu,
+                                onSuccess = {
+                                    loadMenu()
+                                },
+                                onError = {
+                                    Log.e(
+                                        "MenuFragment",
+                                        "Delete gagal: ${it.message}"
+                                    )
+                                }
+                            )
                         }
                     )
-                }
-            )
-
-            recyclerView.adapter = adapter
+            }
         }
     }
 }

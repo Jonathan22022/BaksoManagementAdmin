@@ -28,6 +28,8 @@ class WeeklyInsightFragment : Fragment() {
     private lateinit var tvIncome: TextView
     private lateinit var tvBestMenu: TextView
     private lateinit var tvExpense: TextView
+    private lateinit var tvProfit: TextView
+    private lateinit var tvModalAwal: TextView
     private var startDateMillis = 0L
     private var endDateMillis = 0L
 
@@ -53,6 +55,8 @@ class WeeklyInsightFragment : Fragment() {
         tvIncome = view.findViewById(R.id.tvIncome)
         tvBestMenu = view.findViewById(R.id.tvBestMenu)
         tvExpense = view.findViewById(R.id.tvExpense)
+        tvProfit = view.findViewById(R.id.tvProfit)
+        tvModalAwal = view.findViewById(R.id.tvModalAwal)
         loadCurrentWeek()
 
         etWeek.setOnClickListener {
@@ -175,12 +179,23 @@ class WeeklyInsightFragment : Fragment() {
         ) { insight ->
 
             requireActivity().runOnUiThread {
+                val profit =
+                    insight.totalIncome - insight.totalExpense
+
+                tvModalAwal.text =
+                    "Total Modal Awal : Rp %,d"
+                        .format(insight.totalModalAwal)
+                        .replace(',', '.')
 
                 tvIncome.text =
                     "Total Pendapatan : Rp ${insight.totalIncome}"
 
                 tvExpense.text =
                     "Total Pengeluaran : Rp ${insight.totalExpense}"
+
+                tvProfit.text =
+                    "Laba Bersih : Rp %,d".format(profit)
+                        .replace(',', '.')
 
                 tvBestMenu.text =
                     "Menu Terlaris : ${insight.bestMenu} (${insight.totalBestMenuOrdered}x)"
@@ -226,15 +241,18 @@ class WeeklyInsightFragment : Fragment() {
             start.timeInMillis,
             end.timeInMillis
         ) { insight ->
+            val profit = insight.totalIncome - insight.totalExpense
+            tvModalAwal.text =
+                "Total Modal Awal : Rp %,d"
+                    .format(insight.totalModalAwal)
+                    .replace(',', '.')
+            tvIncome.text = "Total Pendapatan : Rp ${insight.totalIncome}"
 
-            tvIncome.text =
-                "Total Pendapatan : Rp ${insight.totalIncome}"
+            tvExpense.text = "Total Pengeluaran : Rp ${insight.totalExpense}"
 
-            tvExpense.text =
-                "Total Pengeluaran : Rp ${insight.totalExpense}"
+            tvProfit.text = "Laba Bersih : Rp %,d".format(profit).replace(',', '.')
 
-            tvBestMenu.text =
-                "Menu Terlaris : ${insight.bestMenu} (${insight.totalBestMenuOrdered}x)"
+            tvBestMenu.text = "Menu Terlaris : ${insight.bestMenu} (${insight.totalBestMenuOrdered}x)"
 
             setupChart(
                 insight.dailyIncome,

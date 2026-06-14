@@ -40,4 +40,5 @@
     <color name="placeholder_text">#666666</color>
     <color name="placeholder_border">#D6D6D6</color>
     <color name="placeholder_bg">#FFFFFF</color>
+    <color name="table_border">#D6D6D6</color>
 </resources>

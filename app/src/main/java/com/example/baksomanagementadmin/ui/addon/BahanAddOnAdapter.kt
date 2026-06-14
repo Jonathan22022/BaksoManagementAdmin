@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baksomanagementadmin.R
 import com.example.baksomanagementadmin.data.model.BahanBaku
 import com.example.baksomanagementadmin.data.model.BahanItem
-
 class BahanAddOnAdapter(
     private val list: List<BahanBaku>,
     selectedList: List<BahanItem> = emptyList()
 ) : RecyclerView.Adapter<BahanAddOnAdapter.ViewHolder>() {
-
     private val selectedMap =
         mutableMapOf<String, Double>()
 
@@ -32,12 +30,12 @@ class BahanAddOnAdapter(
 
         val cbBahan: CheckBox =
             view.findViewById(R.id.cbBahan)
-
         val tvNama: TextView =
             view.findViewById(R.id.tvNamaBahan)
-
         val etJumlah: EditText =
             view.findViewById(R.id.etJumlah)
+        val tvSatuan: TextView =
+            view.findViewById(R.id.tvSatuan)
     }
 
     override fun onCreateViewHolder(
@@ -65,19 +63,27 @@ class BahanAddOnAdapter(
         val item = list[position]
 
         holder.tvNama.text = item.nama
+        holder.tvSatuan.text = "/ ${item.satuan} (stok ${item.berat})"
 
-        val selectedJumlah =
-            selectedMap[item.id]
+        val selectedJumlah = selectedMap[item.id]
+
+
+        holder.cbBahan.setOnCheckedChangeListener(null)
+
+        val isSelected = selectedJumlah != null
+
+        holder.cbBahan.isChecked = isSelected
+        holder.etJumlah.isEnabled = isSelected
 
         if (selectedJumlah != null) {
-
-            holder.cbBahan.isChecked = true
-            holder.etJumlah.setText(
-                selectedJumlah.toString()
-            )
+            holder.etJumlah.setText(selectedJumlah.toString())
+        } else {
+            holder.etJumlah.setText("")
         }
 
         holder.cbBahan.setOnCheckedChangeListener { _, isChecked ->
+
+            holder.etJumlah.isEnabled = isChecked
 
             if (isChecked) {
 
@@ -90,22 +96,42 @@ class BahanAddOnAdapter(
             } else {
 
                 selectedMap.remove(item.id)
+                holder.etJumlah.setText("")
             }
         }
 
-        holder.etJumlah.setOnFocusChangeListener { _, hasFocus ->
+        holder.etJumlah.addTextChangedListener(
+            object : android.text.TextWatcher {
 
-            if (!hasFocus &&
-                holder.cbBahan.isChecked
-            ) {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
 
-                val jumlah =
-                    holder.etJumlah.text.toString()
-                        .toDoubleOrNull() ?: 0.0
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {}
 
-                selectedMap[item.id] = jumlah
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) {
+
+                    if (holder.cbBahan.isChecked) {
+
+                        val jumlah =
+                            s.toString()
+                                .toDoubleOrNull() ?: 0.0
+
+                        selectedMap[item.id] = jumlah
+                    }
+                }
             }
-        }
+        )
     }
 
     fun getSelectedBahan(): List<BahanItem> {

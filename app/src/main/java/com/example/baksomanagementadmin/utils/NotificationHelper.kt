@@ -59,4 +59,31 @@ object NotificationHelper {
             .from(context)
             .notify(2001, notification)
     }
+
+    fun showNotification(
+        context: Context,
+        title: String,
+        body: String
+    ) {
+
+        val notification =
+            NotificationCompat.Builder(
+                context,
+                CHANNEL_ID
+            )
+                .setSmallIcon(R.mipmap.baksoku_foreground)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(
+                    NotificationCompat.PRIORITY_HIGH
+                )
+                .build()
+
+        NotificationManagerCompat
+            .from(context)
+            .notify(
+                System.currentTimeMillis().toInt(),
+                notification
+            )
+    }
 }
