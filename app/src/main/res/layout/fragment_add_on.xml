@@ -78,7 +78,7 @@
                     android:textColor="@color/setting_text"/>
 
                 <TextView
-                    android:layout_width="250dp"
+                    android:layout_width="300dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="Bahan Dibutuhkan"
