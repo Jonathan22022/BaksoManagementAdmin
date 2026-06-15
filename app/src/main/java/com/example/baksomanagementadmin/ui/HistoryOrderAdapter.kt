@@ -17,6 +17,7 @@ import java.util.Locale
 
 class HistoryOrderAdapter(
     private val list: MutableList<HistoryOrder>,
+    private val currentStatus: String,
     private val onCheckedChanged:(Boolean)->Unit,
     private val onDetailClick:(HistoryOrder)->Unit
 ) : RecyclerView.Adapter<HistoryOrderAdapter.ViewHolder>() {
@@ -81,9 +82,6 @@ class HistoryOrderAdapter(
         holder.tvQty.text =
             "Jumlah: ${item.quantity}"
 
-        holder.tvStatus.text =
-            item.status.replaceFirstChar { it.uppercase() }
-
         holder.tvTotal.text =
             "Rp ${item.total}"
 
@@ -96,10 +94,17 @@ class HistoryOrderAdapter(
             sdf.format(Date(item.createdAt))
 
         if (item.status == "selesai") {
+
+            holder.tvStatus.text = "Completed"
+
             holder.tvStatus.setTextColor(
                 android.graphics.Color.parseColor("#2E7D32")
             )
+
         } else {
+
+            holder.tvStatus.text = "Cancelled"
+
             holder.tvStatus.setTextColor(
                 android.graphics.Color.parseColor("#D32F2F")
             )
@@ -111,12 +116,21 @@ class HistoryOrderAdapter(
             .error(R.drawable.bakso)
             .into(holder.imgMenu)
 
-        holder.cbSelect.setOnCheckedChangeListener(
-            null
-        )
+        holder.cbSelect.visibility = View.VISIBLE
+
+        holder.cbSelect.setOnCheckedChangeListener(null)
 
         holder.cbSelect.isChecked =
             item.selected
+
+        holder.cbSelect.setOnCheckedChangeListener { _, checked ->
+
+            item.selected = checked
+
+            onCheckedChanged(
+                list.any { it.selected }
+            )
+        }
 
         holder.cbSelect.setOnCheckedChangeListener { _, checked ->
 

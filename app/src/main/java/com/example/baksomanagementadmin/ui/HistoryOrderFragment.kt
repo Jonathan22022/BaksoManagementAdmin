@@ -76,7 +76,7 @@ class HistoryOrderFragment : Fragment() {
         }
 
         btnCancel.setOnClickListener {
-            currentStatus = "dibatalkan"
+            currentStatus = "cancel"
             switchTab(false)
             filterData()
         }
@@ -182,6 +182,7 @@ class HistoryOrderFragment : Fragment() {
             adapter =
                 HistoryOrderAdapter(
                     fullList,
+                    currentStatus,
                     { showFab ->
 
                         fabDelete.visibility =
@@ -239,7 +240,7 @@ class HistoryOrderFragment : Fragment() {
         adapter =
             HistoryOrderAdapter(
                 filtered,
-
+                currentStatus,
                 { showFab ->
 
                     fabDelete.visibility =

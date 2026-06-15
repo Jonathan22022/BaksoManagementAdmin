@@ -15,7 +15,7 @@ class HistoryOrderRepository {
         firestore.collection("orders")
             .whereIn(
                 "status",
-                listOf("selesai", "dibatalkan")
+                listOf("selesai", "cancel")
             )
             .get()
             .addOnSuccessListener { orders ->

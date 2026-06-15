@@ -16,7 +16,7 @@
         <!-- Nama Bahan Baku -->
         <EditText
             android:id="@+id/etNamaMenu"
-            android:hint="Nama Menu"
+            android:hint="Nama Bahan Baku"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:textColor="@color/setting_text"
