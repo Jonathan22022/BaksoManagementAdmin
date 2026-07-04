@@ -122,6 +122,14 @@ class OrderRepository {
                         doc.getString("status")
                             ?: "pending"
 
+                    val pickupType =
+                        doc.getString("pickupType")
+                            ?: "dine_in"
+
+                    val deliveryAddress =
+                        doc.getString("deliveryAddress")
+                            ?: ""
+
                     firestore.collection("orders")
                         .document(orderId)
                         .collection("items")
@@ -190,7 +198,9 @@ class OrderRepository {
                                         quantity = qty,
                                         total = total,
                                         status = status,
-                                        itemCount = itemCount
+                                        itemCount = itemCount,
+                                        pickupType = pickupType,
+                                        deliveryAddress = deliveryAddress
                                     )
                                 )
                             }
@@ -431,6 +441,26 @@ class OrderRepository {
                                 )
                             }
                         }
+                }
+            }
+    }
+
+    fun observeOrderStatus(
+        orderId: String,
+        onChanged: (String) -> Unit
+    ) {
+
+        firestore.collection("orders")
+            .document(orderId)
+            .addSnapshotListener { snapshot, _ ->
+
+                if (snapshot != null && snapshot.exists()) {
+
+                    val status =
+                        snapshot.getString("status")
+                            ?: "pending"
+
+                    onChanged(status)
                 }
             }
     }

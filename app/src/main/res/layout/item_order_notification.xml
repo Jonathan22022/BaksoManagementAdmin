@@ -70,6 +70,19 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/tvPickupType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Dine In"
+                android:textColor="@color/primary_title"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:background="@drawable/bg_setting_item"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp" />
+
+            <TextView
                 android:id="@+id/tvAddon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

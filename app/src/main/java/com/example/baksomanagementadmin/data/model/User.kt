@@ -10,5 +10,8 @@ data class User(
     //default profile picture di res/drawable/ic_account_.xml
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-    val fcmToken: String = ""
+    val fcmToken: String = "",
+    val alamat: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
 )

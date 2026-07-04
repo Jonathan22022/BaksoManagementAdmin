@@ -12,5 +12,7 @@ data class AdminOrderItem(
     val total:Int = 0,
     val status:String = "",
     val completed:Boolean = false,
-    val itemCount:Int = 1
+    val itemCount:Int = 1,
+    val pickupType: String = "dine_in",
+    val deliveryAddress: String = ""
 )

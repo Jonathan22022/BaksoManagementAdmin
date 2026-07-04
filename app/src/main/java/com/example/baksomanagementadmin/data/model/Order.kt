@@ -26,5 +26,9 @@ data class Order(
     val createdAt: Long = System.currentTimeMillis(),
     val total: Int = 0, //total harga pesanan
     val status: String = "pending",
-    val completed:Boolean = false
+    val completed:Boolean = false,
+    val pickupType:String="dine_in",
+    val deliveryAddress:String="",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
 )

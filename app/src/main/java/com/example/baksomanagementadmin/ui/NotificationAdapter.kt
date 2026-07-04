@@ -71,6 +71,11 @@ class NotificationAdapter(
                 R.id.tvOther
             )
 
+        val tvPickupType =
+            itemView.findViewById<TextView>(
+                R.id.tvPickupType
+            )
+
         val btnDetail =
             itemView.findViewById<Button>(
                 R.id.btnOrderDetail
@@ -116,6 +121,12 @@ class NotificationAdapter(
 
         holder.tvTotal.text =
             "Rp ${item.total}"
+
+        holder.tvPickupType.text =
+            when (item.pickupType) {
+                "delivery" -> "Delivery"
+                else -> "Dine In"
+            }
 
         holder.tvAddon.text =
             item.addons.joinToString {

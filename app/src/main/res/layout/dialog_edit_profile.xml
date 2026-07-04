@@ -1,41 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="20dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_dialog_edit">
 
-    <ImageView
-        android:id="@+id/imgProfileEdit"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_account_"
-        android:background="@drawable/profile_circle_bg"
-        android:padding="8dp"/>
-
-    <EditText
-        android:id="@+id/etNama"
-        android:hint="Nama"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <EditText
-        android:id="@+id/etEmail"
-        android:hint="Email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/imgProfileEdit"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="@drawable/profile_circle_bg"
+            android:padding="8dp"
+            android:src="@drawable/ic_account_"
+            android:layout_marginBottom="15dp" />
 
-    <EditText
-        android:id="@+id/etPhone"
-        android:hint="Nomor Telepon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etNama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nama"
+            android:background="@drawable/bg_edittextprofile"
+            android:textColor="@color/setting_text"
+            android:textColorHint="@color/text_secondary"
+            android:layout_marginBottom="10dp"/>
 
-    <Button
-        android:id="@+id/btnSave"
-        android:text="Save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:background="@drawable/bg_edittextprofile"
+            android:textColor="@color/setting_text"
+            android:textColorHint="@color/text_secondary"
+            android:layout_marginBottom="10dp"/>
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nomor Telepon"
+            android:background="@drawable/bg_edittextprofile"
+            android:textColor="@color/setting_text"
+            android:textColorHint="@color/text_secondary"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Alamat Delivery"
+            android:textStyle="bold"
+            android:textColor="@color/setting_text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/mapContainerEdit"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/etAlamatEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:hint="Masukkan alamat"
+                android:background="@drawable/bg_edittextprofile"
+                android:textColor="@color/setting_text"
+                android:textColorHint="@color/text_secondary" />
+
+            <Button
+                android:id="@+id/btnGunakanLokasiEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gunakan Lokasi Saya"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/red" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Save"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/red" />
+
+    </LinearLayout>
+
+</ScrollView>

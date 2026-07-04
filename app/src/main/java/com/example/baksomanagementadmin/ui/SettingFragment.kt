@@ -22,6 +22,21 @@ import com.example.baksomanagementadmin.MainActivity
 import com.example.baksomanagementadmin.utils.SavedAccountManager
 import com.example.baksomanagementadmin.utils.SessionManager
 import com.example.baksomanagementadmin.utils.ThemeManager
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import java.util.Locale
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 
 class SettingFragment : Fragment() {
 
@@ -31,6 +46,12 @@ class SettingFragment : Fragment() {
     private var cameraUri: Uri? = null
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseClient.firestore
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationPermissionLauncher: ActivityResultLauncher<Array<String>>
+    private var googleMapEdit: GoogleMap? = null
+    private var etAlamatEdit: EditText? = null
+    private var selectedLatitude: Double = 0.0
+    private var selectedLongitude: Double = 0.0
 
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -40,6 +61,90 @@ class SettingFragment : Fragment() {
                 Log.d(TAG, "Image dipilih dari galeri: $uri")
             }
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        locationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (granted) {
+                fetchCurrentLocationForEdit()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Izin lokasi diperlukan",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun fetchCurrentLocationForEdit() {
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+
+                if (location == null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Lokasi tidak ditemukan, aktifkan GPS",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@addOnSuccessListener
+                }
+
+                selectedLatitude = location.latitude
+                selectedLongitude = location.longitude
+
+                updateMarkerEdit(selectedLatitude, selectedLongitude)
+                reverseGeocodeToEdit(selectedLatitude, selectedLongitude)
+            }
+    }
+
+    private fun reverseGeocodeToEdit(lat: Double, lng: Double) {
+
+        try {
+            val geocoder = Geocoder(requireContext(), Locale("id", "ID"))
+            val list = geocoder.getFromLocation(lat, lng, 1)
+
+            if (!list.isNullOrEmpty()) {
+                etAlamatEdit?.setText(list[0].getAddressLine(0))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Geocoder error: ${e.message}")
+        }
+    }
+
+    private fun updateMarkerEdit(lat: Double, lng: Double) {
+
+        val map = googleMapEdit ?: return
+
+        val posisi = LatLng(lat, lng)
+
+        map.clear()
+
+        map.addMarker(
+            MarkerOptions()
+                .position(posisi)
+                .draggable(true)
+                .title("Lokasi Delivery")
+        )
+
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(posisi, 17f)
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -309,21 +414,108 @@ class SettingFragment : Fragment() {
 
     private fun showEditProfileDialog() {
 
-        Log.d(TAG, "Membuka dialog edit profile")
-        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_profile, null)
-        imgProfile = dialogView.findViewById(R.id.imgProfileEdit)
-        val etNama = dialogView.findViewById<EditText>(R.id.etNama)
-        val etEmail = dialogView.findViewById<EditText>(R.id.etEmail)
-        val etPhone = dialogView.findViewById<EditText>(R.id.etPhone)
-        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
+        val dialogView =
+            layoutInflater.inflate(
+                R.layout.dialog_edit_profile,
+                null
+            )
 
-        val uid = auth.currentUser?.uid ?: return
+        imgProfile =
+            dialogView.findViewById(R.id.imgProfileEdit)
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .create()
+        val etNama =
+            dialogView.findViewById<EditText>(R.id.etNama)
+
+        val etEmail =
+            dialogView.findViewById<EditText>(R.id.etEmail)
+
+        val etPhone =
+            dialogView.findViewById<EditText>(R.id.etPhone)
+
+        etAlamatEdit = dialogView.findViewById(R.id.etAlamatEdit)
+        val btnGunakanLokasiEdit = dialogView.findViewById<Button>(R.id.btnGunakanLokasiEdit)
+
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapContainerEdit)
+                    as? SupportMapFragment
+
+        mapFragment?.getMapAsync { map ->
+
+            googleMapEdit = map
+
+            val defaultLocation =
+                if (selectedLatitude != 0.0 || selectedLongitude != 0.0)
+                    LatLng(selectedLatitude, selectedLongitude)
+                else
+                    LatLng(-6.2000, 106.8166) // fallback Jakarta
+
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f)
+            )
+
+            map.addMarker(
+                MarkerOptions()
+                    .position(defaultLocation)
+                    .draggable(true)
+                    .title("Lokasi Delivery")
+            )
+
+            if (selectedLatitude == 0.0 && selectedLongitude == 0.0) {
+                selectedLatitude = defaultLocation.latitude
+                selectedLongitude = defaultLocation.longitude
+            }
+
+            map.setOnMarkerDragListener(
+                object : GoogleMap.OnMarkerDragListener {
+
+                    override fun onMarkerDragEnd(marker: Marker) {
+                        selectedLatitude = marker.position.latitude
+                        selectedLongitude = marker.position.longitude
+                        reverseGeocodeToEdit(selectedLatitude, selectedLongitude)
+                    }
+
+                    override fun onMarkerDrag(marker: Marker) {}
+                    override fun onMarkerDragStart(marker: Marker) {}
+                }
+            )
+        }
+
+        btnGunakanLokasiEdit.setOnClickListener {
+
+            val fineGranted = ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!fineGranted) {
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            } else {
+                fetchCurrentLocationForEdit()
+            }
+        }
+
+        val btnSave =
+            dialogView.findViewById<Button>(R.id.btnSave)
+
+        val uid =
+            auth.currentUser?.uid ?: return
+
+        val dialog =
+            AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create()
 
         dialog.show()
+        dialog.setOnDismissListener {
+            googleMapEdit = null
+            selectedLatitude = 0.0
+            selectedLongitude = 0.0
+        }
 
         firestore.collection("users")
             .document(uid)
@@ -333,6 +525,9 @@ class SettingFragment : Fragment() {
                 etNama.setText(doc.getString("nama"))
                 etEmail.setText(doc.getString("email"))
                 etPhone.setText(doc.getString("noTelp"))
+                etAlamatEdit?.setText(doc.getString("alamat"))
+                selectedLatitude = doc.getDouble("latitude") ?: 0.0
+                selectedLongitude = doc.getDouble("longitude") ?: 0.0
                 val imageUrl = doc.getString("profilePicture")
 
                 Log.d(TAG, "Nama: $etNama")
@@ -376,7 +571,7 @@ class SettingFragment : Fragment() {
             val nama = etNama.text.toString()
             val email = etEmail.text.toString()
             val phone = etPhone.text.toString()
-
+            val alamat = etAlamatEdit?.text.toString()
             Log.d(TAG, "Klik Save Profile")
             Log.d(TAG, "Nama: $nama")
             Log.d(TAG, "Email: $email")
@@ -385,13 +580,13 @@ class SettingFragment : Fragment() {
             if (imageUri != null) {
                 Log.d(TAG, "Upload gambar baru ke Cloudinary")
                 uploadProfileImage(imageUri!!) { imageUrl ->
-                    updateUser(uid, nama, email, phone, imageUrl)
+                    updateUser(uid, nama, email, phone, alamat, selectedLatitude, selectedLongitude,imageUrl)
                     dialog.dismiss()
                 }
 
             } else {
                 Log.d(TAG, "Tidak ada gambar baru")
-                updateUser(uid, nama, email, phone, null)
+                updateUser(uid, nama, email, phone, alamat, selectedLatitude, selectedLongitude,null)
                 dialog.dismiss()
             }
         }
@@ -439,6 +634,9 @@ class SettingFragment : Fragment() {
         nama: String,
         email: String,
         phone: String,
+        alamat: String,
+        latitude: Double,
+        longitude: Double,
         imageUrl: String?
     ) {
         Log.d(TAG, "Update user Firestore")
@@ -446,6 +644,9 @@ class SettingFragment : Fragment() {
             "nama" to nama,
             "email" to email,
             "noTelp" to phone,
+            "alamat" to alamat,
+            "latitude" to latitude,
+            "longitude" to longitude,
             "updatedAt" to System.currentTimeMillis()
         )
 
